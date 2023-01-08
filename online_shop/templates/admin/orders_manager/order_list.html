@@ -1,0 +1,68 @@
+{% extends 'admin/base.html' %} 
+{% load static %} 
+{% block main %}
+<div class="main-panel">
+    <div class="content">
+        <div class="page-inner">
+            <div class="mt-2 mb-4">
+                <h2 class="text-black pb-2">Xin chào, {{request.user}}</h2>
+            </div>
+{% comment %} <a href="{% url 'add_order' %}" class="btn btn-primary">Thêm sản phẩm mới</a> {% endcomment %}
+<table class="table">
+    <h1 class="text-center text-uppercase h3">Danh sách đặt hàng</h1>
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên khách hàng</th>
+            <th>Số điện thoại</th>
+            <th>Địa chỉ giao hàng</th>
+            <th>Tên sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Tổng hóa đơn</th>
+            <th>Ngày đặt hàng</th>
+            <th>Trạng thái</th>
+            <th>Username</th>
+            {% comment %} <th>Active</th> {% endcomment %}
+            <th>Tùy chọn</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for order in  page_obj %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ order.customer_name }}</td>
+                <td>{{ order.phone_number }}</td>
+                <td>{{ order.shipping_address }}</td>
+                <td>{{ order.product }}</td>
+                <td>{{ order.quantity }}</td>
+                <td>{{ order.total_price }} VNĐ</td>
+                <td>{{ order.created_at}}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.customer }}</td>
+                
+                {% comment %} <td>{{ order.is_active }}</td> {% endcomment %}
+                <td>
+                    <a href="{% url 'delete_order' order.id %}" class="btn btn-danger">Xóa</a>
+                </td>
+             </tr> 
+        {% endfor %}
+    </tbody> 
+</table>
+<nav aria-label="...">
+    <ul class="pagination justify-content-center ">
+        {% if page_obj.has_previous %}
+      <li class="page-item step-links">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}"> << </a>
+      </li>
+      {% endif %}
+      <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}"> >> </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+</div>
+{% endblock %}

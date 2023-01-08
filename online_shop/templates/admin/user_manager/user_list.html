@@ -1,0 +1,61 @@
+{% extends 'admin/base.html' %} 
+{% load static %} 
+{% block main %}
+<div class="main-panel">
+    <div class="content">
+        <div class="page-inner">
+            <div class="mt-2 mb-4">
+                <h2 class="text-black pb-2">Welcome back, {{request.user}}</h2>
+            </div>
+<a href="{% url 'add_user' %}" class="btn btn-primary">Thêm khách hàng</a>
+<table class="table">
+    <h1 class="text-center text-uppercase h3">Danh sách khách hàng</h1>
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên khách hàng</th>
+            <th>Giới tính</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Username</th>
+            <th>Password</th>
+            <th>Tùy chọn</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for customer in  page_obj %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ customer.fullname }}</td>
+                <td>{{ customer.gender }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>{{ customer.address }}</td>
+                <td>{{ customer.username }}</td>
+                <td>{{ customer.password}}</td>
+                <td><a href="{% url 'edit_customer_admin' customer.id %}" class="btn btn-primary"><span class=" glyphincon glyphicon-pencil">Sửa</span></a>
+                    <a href="{% url 'delete_customer' customer.id %}" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<nav aria-label="...">
+    <ul class="pagination justify-content-center ">
+        {% if page_obj.has_previous %}
+      <li class="page-item step-links">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}"> << </a>
+      </li>
+      {% endif %}
+      <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}"> >> </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'admin/base.html' %} 
+{% load static %}
+{% block main %}
+<div class="main-panel">
+    <div class="content">
+        <div class="page-inner">
+            <div class="mt-2 mb-4">
+                <h2 class="text-black pb-2">Xin chào, {{request.user}}</h2>
+            </div>
+  <div class="wrapper";>
+    <div class="container justify-content-around">
+        <div class="row">
+            <form action="{{'.'}}" class="col-md-12 bg-light p-3"  method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+                <h1 class="text-center text-uppercase h3">Cập nhập sản phẩm</h1>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Hình sản phẩm</h3></label>
+                    {{ form.image}}
+                </div>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Tên sản phẩm</h3></label>
+                    {{ form.title}}
+                </div>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Loại sản phẩm</h3></label>
+                    {{ form.category}}
+                </div>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Hãng</h3></label>
+                    {{ form.brand}}
+                </div>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Giá sản phẩm</h3></label>
+                    {{ form.price}}
+                </div>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Mô tả</h3></label>
+                    {{ form.description}}
+                </div>
+                <div class="form-group">
+                    <label for=""  class="text-uppercase h3"></h3>Active</h3></label>
+                    {{ form.is_active}}
+                </div>
+                <div class="form-group ">
+                  <input type="submit" value="Lưu" class="btn btn-block btn-primary">
+                  <a href="{% url 'product_list' %}" class="btn btn-block btn-primary">Quay lại</a>
+              </div>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
