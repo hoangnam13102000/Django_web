@@ -1,5 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from users import forms
+from .models import Contact
+from .forms import ContactForm
 from users.models import Customer
 from products.forms import Product, Category
 from django.contrib.auth.models import User
@@ -18,10 +20,20 @@ def index(request):
     paginator = Paginator( products, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request,'home/index.html',{'page_obj': page_obj,'categories':categories})
+    category = get_object_or_404(Category, pk=1)
+    product_best_seller = Product.objects.filter(category=category).all()
+    paginator1 = Paginator(product_best_seller, 3)
+    page_number1 = request.GET.get('page')
+    page_obj1 = paginator1.get_page(page_number1)
+    category1 = get_object_or_404(Category, pk=2)
+    product_best_seller2 = Product.objects.filter(category=category1).all()
+    paginator2 = Paginator(product_best_seller2, 2)
+    page_number2 = request.GET.get('page')
+    page_obj2 = paginator2.get_page(page_number2)
+    return render(request,'home/index.html',{'page_obj': page_obj,'categories':categories,'page_obj1': page_obj1,'page_obj2': page_obj2})
 
 # Admin page
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def index_admin(request):
     cusromers = Customer.objects.all()
     paginator = Paginator(cusromers, 5)
@@ -33,13 +45,38 @@ def index_admin(request):
     page_obj1 = paginator1.get_page(page_number1)
     return render(request,'admin/index.html',{'page_obj': page_obj,'page_obj1': page_obj1})
 
-# Contact page
+# Contact in home page
 def contact(request):
     categories=Category.objects.all()
-    return render(request,'home/contact.html',{'categories':categories})
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            form = ContactForm(request.POST)
+            user_id= request.user.id
+            user = get_object_or_404(User, id=user_id)
+            customer = Customer.objects.filter(username=user.username).first()
+            if form.is_valid():
+                username_contact=Contact(username=customer)
+                username_contact.save()
+                form.save()
+                messages.success(request,'Phản hồi của bạn đã được gửi')
+                return redirect('contact')     
+        else:
+            messages.error(request,'Bạn cần đăng nhập để liên hệ với chúng tôi!')
+    form = ContactForm()
+    return render(request,'home/contact.html',{'categories':categories,'form':form})
+
+# Show list Contact admin
+def contact_list(request):
+    contacts = Contact.objects.all()
+    paginator = Paginator(contacts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'admin/contact_manager/contact_list.html', {'page_obj': page_obj})
+
 
 # Login page
 def login(request):
+    categories=Category.objects.all()
     acount=forms.LoginForm()
     if(request.method=="POST"):
         username=request.POST['username']
@@ -60,7 +97,7 @@ def login(request):
             messages.error(request,'Tài khoản hoặc mật khẩu không đúng!')
             return redirect('login')
     acount=forms.LoginForm()
-    return render(request,'home/login.html', {'form':acount})
+    return render(request,'home/login.html', {'form':acount,'categories':categories})
 
 # Register page
 def register(request):
@@ -87,8 +124,9 @@ def register(request):
             messages.success(request,'Đăng ký tài khoản thành công')
             return redirect('login')
     else:
+        categories=Category.objects.all()
         form=forms.RegisterForm()
-    return render(request,'home/register.html',{'form':form})
+    return render(request,'home/register.html',{'form':form,'categories':categories})
 
 # Logout
 def logout(request):

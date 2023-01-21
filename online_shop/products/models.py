@@ -23,8 +23,12 @@ class Product(models.Model):
         db_table='Product'
     def __str__(self):
         return self.title
-# class Comment(models.Model):
-#     product = models.ForeignKey(Product, related_name="comments", on_delete=models.CASCADE)
-#     commenter_name = models.CharField(max_length=200)
-#     comment_body = models.TextField()
-#     date_added = models.DateTimeField(auto_now_add=True)
+
+# Table comments
+class Comment(models.Model):
+    product = models.ForeignKey(Product, related_name="comments", on_delete=models.CASCADE, default=False, null=True)
+    commenter_name = models.CharField(max_length=200)
+    commenter_email= models.EmailField(max_length=20)
+    comment_body = models.CharField(max_length=500)
+    date_added = models.DateTimeField(auto_now_add=True)
+    

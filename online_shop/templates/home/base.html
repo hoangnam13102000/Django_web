@@ -143,7 +143,7 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
                         <!-- END CURRENCIES -->
                         <!-- BEGIN LANGS -->
                         <li class="langs-block">
-                            <a href="javascript:void(0);" class="current">Địa chỉ: Hai Bà Trưng, quận 1, tp: Hồ Chí Minh  </a>
+                            <a href="{% url 'contact' %}" class="current">Địa chỉ: Hai Bà Trưng, quận 1, tp: Hồ Chí Minh  </a>
                             <div class="langs-block-others-wrapper">
                                 <div class="langs-block-others">
                                     <a href="javascript:void(0);">Chi nhánh 1:</a>
@@ -220,7 +220,7 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
                 <ul>
                   {% for item in  categories %}
                     <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">{{item.name}} </a>
+                        <a class="dropdown-toggle"  href="{% url 'product_of_category' item.id %}">{{item.name}} </a>
                     </li>
                     {% endfor %}
 
@@ -231,11 +231,11 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
                         <span class="sep"></span>
                         <i class="fa fa-search search-btn"></i>
                         <div class="search-box">
-                            <form action="#">
+                            <form  action="{% url 'search_products' %}" >
                                 <div class="input-group">
-                                    <input type="text" placeholder="Search" class="form-control">
+                                    <input name="query"  type="text" placeholder="Tìm kiếm" class="form-control" />
                                     <span class="input-group-btn">
-                      <button class="btn btn-primary" type="submit">Search</button>
+                      <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                     </span>
                                 </div>
                             </form>
@@ -291,16 +291,16 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
                 <div class="col-md-4 steps-block-col">
                     <i class="fa fa-truck"></i>
                     <div>
-                        <h2>Free shipping</h2>
-                        <em>Express delivery withing 3 days</em>
+                        <h2>Miễn phí vận chuyển</h2>
+                        <em>Giao hàng chỉ trong 3 ngày</em>
                     </div>
                     <span>&nbsp;</span>
                 </div>
                 <div class="col-md-4 steps-block-col">
                     <i class="fa fa-gift"></i>
                     <div>
-                        <h2>Daily Gifts</h2>
-                        <em>3 Gifts daily for lucky customers</em>
+                        <h2>Quà tặng hàng ngày</h2>
+                        <em>3 phần quà cho 3 khách hàng may mắn nhát</em>
                     </div>
                     <span>&nbsp;</span>
                 </div>
@@ -308,7 +308,7 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
                     <i class="fa fa-phone"></i>
                     <div>
                         <h2>477 505 8877</h2>
-                        <em>24/7 customer care available</em>
+                        <em>Dịch vụ chăm sóc khách hàng 24/7</em>
                     </div>
                 </div>
             </div>
@@ -322,22 +322,24 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
           <div class="row">
             <!-- BEGIN BOTTOM ABOUT BLOCK -->
             <div class="col-md-3 col-sm-6 pre-footer-col">
-              <h2>About us</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam sit nonummy nibh euismod tincidunt ut laoreet dolore magna aliquarm erat sit volutpat. Nostrud exerci tation ullamcorper suscipit lobortis nisl aliquip  commodo consequat. </p>
-              <p>Duis autem vel eum iriure dolor vulputate velit esse molestie at dolore.</p>
+              <h2>Giới thiệu</h2>
+              <p>Xin chào! Trang web của chúng tôi là một trang web bán hàng trực tuyến với rất nhiều sản phẩm đa dạng từ các thương hiệu uy tín. Chúng tôi có một đội ngũ nhân viên tư vấn chuyên nghiệp sẽ giúp bạn tìm kiếm và chọn sản phẩm phù hợp nhất cho bạn. 
+                Hãy đến với trang web của chúng tôi để khám phá các sản phẩm và dịch vụ tuyệt vời của chúng tôi! Chúng tôi hy vọng sẽ giúp bạn có trải nghiệm mua sắm tuyệt vời hơn</p>
+              <p>Trân trọng,</p>
+              <p>SUPER SHOP</p>
             </div>
             <!-- END BOTTOM ABOUT BLOCK -->
             <!-- BEGIN BOTTOM INFO BLOCK -->
             <div class="col-md-3 col-sm-6 pre-footer-col">
-              <h2>Information</h2>
+              <h2>Thông tin</h2>
               <ul class="list-unstyled">
-                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Delivery Information</a></li>
-                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Customer Service</a></li>
-                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Order Tracking</a></li>
-                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Shipping &amp; Returns</a></li>
-                <li><i class="fa fa-angle-right"></i> <a href="contacts.html">Contact Us</a></li>
-                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Careers</a></li>
-                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Payment Methods</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Thông tin vận chuyển</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Dịch vụ khách hàng</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Dặt hàng</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Giao hàng &amp; Trả hàng</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="contacts.html">Liên hệ</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Công việc</a></li>
+                <li><i class="fa fa-angle-right"></i> <a href="javascript:;">Phương thức thanh toán</a></li>
               </ul>
             </div>
             <!-- END INFO BLOCK -->
@@ -351,11 +353,10 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
 
             <!-- BEGIN BOTTOM CONTACTS -->
             <div class="col-md-3 col-sm-6 pre-footer-col">
-              <h2>Our Contacts</h2>
+              <h2>Liên hệ</h2>
               <address class="margin-bottom-40">
-                35, Lorem Lis Street, Park Ave<br>
-                California, US<br>
-                Phone: 300 323 3456<br>
+                104 HAI BÀ TRƯNG, BẾN NGHÉ, QUẬN 1, TP.HCM<br>
+                SĐT: 300 323 3456<br>
                 Fax: 300 323 1456<br>
                 Email: <a href="mailto:info@metronic.com">info@metronic.com</a><br>
                 Skype: <a href="skype:metronic">metronic</a>
@@ -387,7 +388,7 @@ Purchase Premium Metronic Admin Theme: http://themeforest.net/item/metronic-resp
                   <div class="input-group">
                     <input type="text" placeholder="youremail@mail.com" class="form-control">
                     <span class="input-group-btn">
-                      <button class="btn btn-primary" type="submit">Subscribe</button>
+                      <button class="btn btn-primary" type="submit">Đăng ký</button>
                     </span>
                   </div>
                 </form>

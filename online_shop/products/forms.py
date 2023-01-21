@@ -1,6 +1,5 @@
 from django import forms
-from . models import Category
-from . models import Product
+from . models import Category,Comment,Product
 
 # Form Product
 class ProductForm(forms.ModelForm):
@@ -25,10 +24,14 @@ class CategoryForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Loại sản phẩm'})
         }
-# class CommentForm(forms.ModelForm):
-#     class Meta:
-#         model = Comment
-#         fields = ('comment_body',)
-#         widgets = {
-#             'comment_body': forms.Textarea(attrs={'class': 'form-control'}),
-#         }
+
+# Form Comment
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('commenter_name','commenter_email','comment_body')
+        widgets = {
+            'commenter_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Nhập tên','required':''}),
+            'commenter_email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
+            'comment_body': forms.TextInput(attrs={'class': 'form-control','placeholder':'Nhận xét','required':''}),
+        }

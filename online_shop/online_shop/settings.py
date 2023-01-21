@@ -139,3 +139,8 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+from django.utils import timezone
+
+# Set timezone to Vietnam
+timezone.activate(timezone.get_default_timezone_name())

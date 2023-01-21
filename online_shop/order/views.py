@@ -4,7 +4,9 @@ from users.models import Customer
 from django.contrib import messages
 from .forms import OrderForm
 from .models import Order
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from products.models import  Category
 
 # Add Product Into Cart 
 def add_to_cart(request, product_id):
@@ -41,7 +43,8 @@ def cart(request):
             total += item['total_price']
             cart_items.append(item)
     form = OrderForm()
-    return render(request, 'home/view_cart.html', {'cart_items': cart_items, 'total': total, 'form':form})
+    categories=Category.objects.all()
+    return render(request, 'home/view_cart.html', {'cart_items': cart_items, 'total': total, 'form':form,'categories':categories})
 
 
 # Clear Cart
@@ -54,6 +57,7 @@ def clear_cart(request):
         return redirect('home')
     return redirect('cart')
 
+# Delete item from cart
 def remove_from_cart(request, product_id):
     if 'cart' in request.session:
         for i, item in enumerate(request.session['cart']):
@@ -63,32 +67,39 @@ def remove_from_cart(request, product_id):
     request.session.modified = True
     return redirect('cart')
 
+# Check out the product
 def checkout(request):
-    if request.method == 'POST':
-        form = OrderForm(request.POST)
-        customer_name=request.POST['customer_name']
-        customer = Customer.objects.filter(fullname=customer_name).first()
-        shipping_address=request.POST['shipping_address']
-        phone_number=request.POST['phone_number']
-        payment_method=request.POST['payment_method']
-        if form.is_valid():
-            order = form.save(commit=False)
-            cart_items = request.session['cart']
-            total = 0
-            for item in cart_items:
-                product = get_object_or_404(Product, pk=item['id'])
-                order = Order(customer_name=customer_name,product=product, shipping_address= shipping_address 
-                              ,quantity=item['quantity'], total_price=item['price'],phone_number=phone_number,payment_method=payment_method,customer =customer  )
-                order.save()
-                # total += item['total_price']
-                # order.total_price = total
-                # order.save()
-                request.session['cart'] = []
-        messages.success(request,'Bạn đã đặt hàng thành công')
-        return redirect('cart')
+    categories=Category.objects.all() 
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = OrderForm(request.POST)
+            customer_name=request.POST['customer_name']
+            user_id= request.user.id
+            user = get_object_or_404(User, id=user_id)
+            customer = Customer.objects.filter(id=user.id).first()
+            shipping_address=request.POST['shipping_address']
+            phone_number=request.POST['phone_number']
+            payment_method=request.POST['payment_method']
+            if form.is_valid():
+                order = form.save(commit=False)
+                cart_items = request.session['cart']
+                # total = 0
+                for item in cart_items:
+                    product = get_object_or_404(Product, pk=item['id'])
+                    order = Order(customer_name=customer_name,product=product, shipping_address= shipping_address 
+                                ,quantity=item['quantity'], total_price=item['price'],phone_number=phone_number,payment_method=payment_method,customer =customer  )
+                    order.save()
+                    # total += item['total_price']
+                    # order.total_price = total
+                    # order.save()
+                    request.session['cart'] = []
+            messages.success(request,'Bạn đã đặt hàng thành công')
+            return redirect('cart')
     else:
+        messages.error(request,'Bạn phải đăng nhập trước khi thanh toán')
+         
         form = OrderForm()
-    return render(request, 'home/view_cart.html', {'form': form})
+    return render(request, 'home/view_cart.html', {'form':form,'categories':categories})
 
 # Show Order list
 def order_list(request):

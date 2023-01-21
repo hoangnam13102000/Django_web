@@ -3,6 +3,7 @@ from .forms import CustomerForm,Customer_info_Form,Change_Password_Form
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Customer
+from products.models import Category
 from django.core.paginator import Paginator
 from .forms import RegisterForm
 from django.contrib.auth.hashers import make_password
@@ -66,6 +67,7 @@ def edit_info(request,id):
 
 # Edit customer(admin page)
 def edit_customer_admin(request,id):
+    categories=Category.objects.all()
     customer = get_object_or_404(Customer, id=id)
     user=User.objects.filter(username=customer.username).first()
     form =CustomerForm(request.POST,instance=customer)
@@ -84,7 +86,7 @@ def edit_customer_admin(request,id):
             return redirect("customer_list")
     else:
         form = CustomerForm(instance=customer)
-    return render(request, 'admin/user_manager/edit_user.html', {'form':form})
+    return render(request, 'admin/user_manager/edit_user.html', {'form':form,'categories':categories})
 
 # Delete customer 
 def delete_customer(request,id):
@@ -97,6 +99,7 @@ def delete_customer(request,id):
 
 # Change password
 def change_password(request, id):
+    categories=Category.objects.all()
     user = get_object_or_404(User, id=id)
     customer=Customer.objects.filter(username=user.username).first()
     form =Change_Password_Form(request.POST)
@@ -125,4 +128,4 @@ def change_password(request, id):
             return redirect('change_password', id=user.id)
         
     form =Change_Password_Form()
-    return render(request, 'home/change_password.html', {'form':form})
+    return render(request, 'home/change_password.html', {'form':form,'categories':categories})

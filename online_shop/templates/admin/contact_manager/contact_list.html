@@ -7,36 +7,29 @@
             <div class="mt-2 mb-4">
                 <h2 class="text-black pb-2">Xin chào, {{request.user}}</h2>
             </div>
-<a href="{% url 'add_product' %}" class="btn btn-primary">Thêm sản phẩm mới</a>
+{% comment %} <a href="{% url 'add_order' %}" class="btn btn-primary">Thêm sản phẩm mới</a> {% endcomment %}
 <table class="table">
-    <h1 class="text-center text-uppercase h3">Danh sách sản phẩm</h1>
+    <h1 class="text-center text-uppercase h3">Danh sách liên hệ</h1>
     <thead>
         <tr>
             <th>STT</th>
-            <th>Hình sản phẩm</th>
-            <th>Tên sản phẩm</th>
-            <th>Loại sản phẩm</th>
-            <th>Hãng</th>
-            <th>Giá sản phẩm</th>
-            <th>Mô tả</th>
+            <th>Tên khách hàng</th>
+            <th>Email</th>
+            <th>Nội dung</th>
             {% comment %} <th>Active</th> {% endcomment %}
             <th>Tùy chọn</th>
         </tr>
     </thead>
     <tbody>
-        {% for product in  page_obj %}
+        {% for contact in  page_obj %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td><img src="/home/media/{{ product.image }}" alt="..." class="img" style="width: 100px; height: 100px;"></td>
-                <td>{{ product.title }}</td>
-                <td>{{ product.category }}</td>
-                <td>{{ product.brand }}</td>
-                <td>{{ product.price }} VNĐ</td>
-                <td>{{ product.description }}</td>
-                {% comment %} <td>{{ product.is_active }}</td> {% endcomment %}
-                <td><a href="{% url 'edit_product' product.id %}" class="btn btn-primary"><span class=" glyphincon glyphicon-pencil">Sửa </span> </a>
-                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">
-                        Xóa </i></a>
+                <td>{{ contact.customer_name }}</td>
+                <td>{{contact.customer_email }}</td>
+                <td>{{ contact.contact}}</td>
+                {% comment %} <td>{{ order.is_active }}</td> {% endcomment %}
+                <td>
+                    <a href=" {% comment %}{% url 'delete_order' order.id %}{% endcomment %}" class="btn btn-danger">Xóa</a>
                 </td>
              </tr> 
         {% endfor %}
