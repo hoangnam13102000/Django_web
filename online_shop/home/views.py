@@ -8,9 +8,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login as auth_login, logout as auth_logout,get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .decorators import allowed_user
 from django.core.paginator import Paginator
-
+from django.conf.urls import handler404
 # Create your views here.
 
 # Home page
@@ -51,17 +50,17 @@ def contact(request):
     if request.method == 'POST':
         if request.user.is_authenticated:
             form = ContactForm(request.POST)
-            user_id= request.user.id
-            user = get_object_or_404(User, id=user_id)
+            user= request.user
             customer = Customer.objects.filter(username=user.username).first()
             if form.is_valid():
-                username_contact=Contact(username=customer)
-                username_contact.save()
-                form.save()
+                new_form = form.save(commit=False) # không thực hiện lưu đối tượng ngay lập tức mà thay vào đó có thể chỉnh sửa giá trị trước khi lưu.
+                new_form.username = customer
+                new_form.save()
                 messages.success(request,'Phản hồi của bạn đã được gửi')
                 return redirect('contact')     
         else:
             messages.error(request,'Bạn cần đăng nhập để liên hệ với chúng tôi!')
+            return redirect('login')
     form = ContactForm()
     return render(request,'home/contact.html',{'categories':categories,'form':form})
 
@@ -92,7 +91,7 @@ def login(request):
             else:
                 messages.success(request,'Đăng nhập trang Admin thành công')
                 auth_login(request,user)
-                return redirect('index_admin')
+                return redirect('admin')
         else:
             messages.error(request,'Tài khoản hoặc mật khẩu không đúng!')
             return redirect('login')
@@ -101,7 +100,7 @@ def login(request):
 
 # Register page
 def register(request):
-    form=forms.RegisterForm()
+    form=forms.AddCustomer()
     if(request.method=="POST"):
         form=forms.RegisterForm(request.POST)
         username=request.POST['username']
@@ -134,3 +133,7 @@ def logout(request):
     messages.success(request,'Đăng xuất thành công')
     return redirect('/')
 
+
+# def page_not_found(request, exception):
+#     return render(request, '404.html', {}, status=404)
+# handler404 = page_not_found

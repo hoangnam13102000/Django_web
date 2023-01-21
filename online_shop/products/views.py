@@ -91,6 +91,7 @@ def delete_product(request, id):
     messages.success(request,'Xóa sản phẩm thành công')
     return redirect('product_list')
 
+# Search product
 def search_products(request):
     query = request.GET.get('query')
     data = Product.objects.filter(title__icontains=query).order_by('-id')

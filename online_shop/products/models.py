@@ -31,4 +31,5 @@ class Comment(models.Model):
     commenter_email= models.EmailField(max_length=20)
     comment_body = models.CharField(max_length=500)
     date_added = models.DateTimeField(auto_now_add=True)
-    
+    class Meta:
+        db_table='comment'

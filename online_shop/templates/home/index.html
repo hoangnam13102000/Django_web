@@ -155,9 +155,9 @@
                     <div>
                         <div class="product-item">
                             <div class="pi-img-wrapper">
-                                <img src="/home/media/{{ product.image }}" class="img-responsive" alt="Berry Lace Dress">
+                                <img src="{{ product.image.url }}" class="img-responsive" alt="Berry Lace Dress">
                                 <div>
-                                    <a href="/home/media/{{ product.image }}" class="btn btn-default fancybox-button">Hiện thị</a>
+                                    <a href="{{ product.image.url }}" class="btn btn-default fancybox-button">Hiện thị</a>
                                     <a href="{% url 'product_detail' product.id %} " class="btn btn-default fancybox-fast-view">Chi tiết</a>
                                 </div>
                             </div> 

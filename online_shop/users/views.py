@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import Customer
 from products.models import Category
 from django.core.paginator import Paginator
-from .forms import RegisterForm
+from .forms import RegisterForm,AddCustomerForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
 
@@ -19,7 +19,7 @@ def customer_list(request):
 
 # add info customer
 def add_user(request):
-    form=RegisterForm()
+    form=AddCustomerForm()
     if(request.method=="POST"):
         form=RegisterForm(request.POST)
         username=request.POST['username']
@@ -47,7 +47,7 @@ def add_user(request):
             messages.success(request,'Thêm khách hàng thành công')
             return redirect('customer_list')
     else:
-        form=RegisterForm()
+        form=AddCustomerForm()
     return render(request,'admin/user_manager/add_user.html',{'form':form})
 
 # edit customer(home page)

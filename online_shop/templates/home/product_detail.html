@@ -6,7 +6,7 @@
     <div class="container">
       <ul class="breadcrumb">
           <li><a href="{% url 'home' %}">Trang chủ</a></li>
-          <li><a href="#">{{product.category}}</a></li>
+          <li><a href="{% url 'product_of_category' product.category.id %}">{{product.category}}</a></li>
           <li class="active">{{product.title}}</li>
       </ul>
       <!-- BEGIN SIDEBAR & CONTENT -->
@@ -149,7 +149,7 @@
                   </div>
                 </div>
                 <div class="padding-top-20">                  
-                  <button type="submit" class="btn btn-primary">Send</button>
+                  <button type="submit" class="btn btn-primary">Gửi</button>
                 </div>
               </form>
               <!-- END FORM--> 

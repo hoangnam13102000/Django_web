@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'home',
     'products',
     'users',
@@ -49,8 +50,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'home.middleware.StaffMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'online_shop.urls'
@@ -144,3 +147,5 @@ from django.utils import timezone
 
 # Set timezone to Vietnam
 timezone.activate(timezone.get_default_timezone_name())
+
+HANDLER_404 = 'home.views.page_not_found'

@@ -14,6 +14,7 @@
         <tr>
             <th>STT</th>
             <th>Tên khách hàng</th>
+            <th>Username</th>
             <th>Email</th>
             <th>Nội dung</th>
             {% comment %} <th>Active</th> {% endcomment %}
@@ -25,8 +26,9 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ contact.customer_name }}</td>
+                <td>{{ contact.username }}</td>
                 <td>{{contact.customer_email }}</td>
-                <td>{{ contact.contact}}</td>
+                <td>{{ contact.content}}</td>
                 {% comment %} <td>{{ order.is_active }}</td> {% endcomment %}
                 <td>
                     <a href=" {% comment %}{% url 'delete_order' order.id %}{% endcomment %}" class="btn btn-danger">Xóa</a>
