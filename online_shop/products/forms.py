@@ -15,7 +15,7 @@ class ProductForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-control'}),
             'brand': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Hãng'}),
         }
-        
+         
 # Form Category
 class CategoryForm(forms.ModelForm):
     class Meta:

@@ -1,0 +1,73 @@
+{% extends 'admin/base.html' %} 
+{% load static %} 
+{% block main %}
+<div class="main-panel">
+  <div class="content">
+      <div class="page-inner">
+          <div class="mt-2 mb-4">
+              <h2 class="text-black pb-2">Xin chào, {{request.user}}</h2>
+          </div>
+<div id="wrapper">
+    <div class="container justify-content-around">
+        <div class="row">
+            <form action="{{'.'}}" class="col-md-8 bg-light p-3 " method="POST" >
+              {% csrf_token %}
+                <h1 class="text-center text-uppercase h3">Cập nhập thông tin nhân viên</h1>
+                <div class="form-group">
+                  <label for="">Họ và tên</label>
+                  {{ form.fullname}}
+              </div>
+                <div class="form-group">
+                    <label for="">Tên Tài Khoản</label>
+                    {{ form.username}}
+                </div>
+                <div class="form-group">
+                    <label for="">Mật Khẩu cũ</label>
+                    {{ form.old_password}}
+                </div>
+                <div class="form-group">
+                    <label for="">Mật Khẩu mới</label>
+                    {{ form.password}}
+                </div>
+                <div class="form-group">
+                  <label for="">Xác nhận mật khẩu</label>
+                  {{ form.password2}}
+              </div>
+                <div class="form-group">
+                  <label for="">Email</label>
+                  {{ form.email}}
+              </div>
+              <div class="form-group">
+                <label for="">Giới tính</label>
+                {{ form.gender}}
+            </div>
+            <div class="form-group">
+              <label for="">Số điện thoại</label>
+              {{ form.phone}}
+          </div>
+              <div class="form-group">
+                <label for="">Địa chỉ</label>
+                {{ form.address}}
+            </div>
+            <div class="form-group">
+                <label for="">Chức vụ</label>
+                {{ form.position}}
+            </div>
+            <div class="form-group">
+                <label for="">Lương</label>
+                {{ form.salary}}
+            </div>
+            <div class="form-group">
+                <label for="">Trạng thái</label>
+                {{ form.is_active}}
+            </div>
+                <div class="form-group"> 
+                  <input type="submit" value="Lưu" class="btn-primary btn btn-block ">
+                  <a href="{% url 'employee_list' %}" class="btn btn-block btn-primary">Quay lại</a>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+  </div>
+{% endblock %}

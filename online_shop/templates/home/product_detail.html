@@ -127,10 +127,10 @@
               {% endfor %}
 
               <!-- BEGIN FORM-->
-              <form action="{% url 'product_detail' product.id %}" id="reviews-form" class="reviews-form" role="form" method="POST">
+              <form action="{% url 'product_detail' product.id %}" id="comment-form" class="comment-form" role="form" method="POST">
                 {% csrf_token %}
                 <h2>Viết nhận xét</h2>
-                <div class="form-group">
+                <div class="form-group ">
                   <label for="name">Họ và tên <span class="require">*</span></label>
                   {{form.commenter_name}}
                 </div>

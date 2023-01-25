@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Customer
+from .models import Customer,Employee
+
+# ------------------------------------------ Begin Login/Register Form ----------------------------------------------------
 
 # Login Form
 class LoginForm(forms.Form):
@@ -13,8 +15,59 @@ class RegisterForm(forms.Form):
     password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu'}))
     password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu'}))
     email=forms.EmailField(max_length=50,widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}))
-   
-# Edit Customer Form (Admin Page)
+    
+# ------------------------------------------ End Login/Register Form ----------------------------------------------------
+
+# ------------------------------------------ Begin Customer Form ----------------------------------------------------
+
+#                           -------------------- Customer Form Home Page -----------------------
+# Edit info Customer Form 
+class Customer_info_Form(forms.ModelForm):
+    class Meta:
+        model=Customer
+        fields= ["fullname","gender","address","phone", "email","username"]
+        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        widgets={
+            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
+            'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
+            'phone': forms.TextInput(attrs={'class':'form-control','placeholder':'Số điện thoại'}),
+            'address': forms.TextInput(attrs={'class':'form-control','placeholder':'Địa chỉ'}),
+            'username':forms.TextInput(attrs={'class':'form-control','readonly':''}),
+            'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}),
+        }
+        
+# Change Password Form
+class Change_Password_Form(forms.ModelForm):
+    old_password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ'}))
+    password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận khẩu'}))
+    class Meta:
+        model=Customer
+        fields= ["password"]
+        widgets={
+            'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu mới','required':''}),
+        }
+
+#                           -------------------- Customer Form Admin Page -----------------------
+
+# Add Customer Form
+class AddCustomerForm(forms.ModelForm):
+    password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ','required':''}))
+    password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu','required':''}))
+    class Meta:
+        model=Customer
+        fields= ["fullname","gender","address","phone", "email","username","password"]
+        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        widgets={
+            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
+            'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
+            'phone': forms.TextInput(attrs={'class':'form-control','placeholder':'Số điện thoại'}),
+            'address': forms.TextInput(attrs={'class':'form-control','placeholder':'Địa chỉ'}),
+            'username':forms.TextInput(attrs={'class':'form-control','required':'','placeholder':'Tên tài khoản'}),
+            'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu','required':''}),
+            'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
+        }
+
+# Edit Customer Form  
 class CustomerForm(forms.ModelForm):
     new_password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ','required':''}))
     password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu','required':''}))
@@ -33,46 +86,52 @@ class CustomerForm(forms.ModelForm):
         }
         
 
-# Edit info Customer Form (Home Page)
-class Customer_info_Form(forms.ModelForm):
-    class Meta:
-        model=Customer
-        fields= ["fullname","gender","address","phone", "email","username"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
-        widgets={
-            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
-            'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
-            'phone': forms.TextInput(attrs={'class':'form-control'}),
-            'address': forms.TextInput(attrs={'class':'form-control'}),
-            'username':forms.TextInput(attrs={'class':'form-control','readonly':''}),
-            'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}),
-        }
-        
-# Change Password Form
-class Change_Password_Form(forms.ModelForm):
-    old_password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ'}))
-    password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận khẩu'}))
-    class Meta:
-        model=Customer
-        fields= ["password"]
-        widgets={
-            'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu mới','required':''}),
-        }
-        
-# Add Customer Form
-class AddCustomerForm(forms.ModelForm):
-    password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ','required':''}))
+
+# ------------------------------------------ End Customer Form ----------------------------------------------------
+
+# ------------------------------------------ Begin Employee Form ---------------------------------------------------
+
+# Add Employee Form
+class AddEmployeeForm(forms.ModelForm):
     password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu','required':''}))
     class Meta:
-        model=Customer
-        fields= ["fullname","gender","address","phone", "email","username","password"]
+        model=Employee
+        fields= ["fullname","gender","address","phone", "email","username","password","salary","position"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
         widgets={
-            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
+            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Tên nhân viên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
-            'phone': forms.TextInput(attrs={'class':'form-control'}),
-            'address': forms.TextInput(attrs={'class':'form-control'}),
+            'phone': forms.TextInput(attrs={'class':'form-control','placeholder':'Số điện thoại'}),
+            'address': forms.TextInput(attrs={'class':'form-control','placeholder':'Địa chỉ'}),
             'username':forms.TextInput(attrs={'class':'form-control','required':'','placeholder':'Tên tài khoản'}),
             'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu','required':''}),
             'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
+            "salary":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Lương nhân viên'}),
+            "position":forms.Select(choices=choices_position,attrs={'class': 'form-control'}),
         }
+
+# Edit EmployeeForm Form
+class EmployeeForm(forms.ModelForm):
+    old_password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ','required':''}))
+    password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu','required':''}))
+    class Meta:
+        model=Employee
+        fields= ["fullname","gender","address","phone", "email","username","password","salary","position","is_active"]
+        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
+        choices_status=(('True','Hoạt động'),('False','Dừng hoạt động'))
+        widgets={
+            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
+            'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
+            'phone': forms.TextInput(attrs={'class':'form-control'}),
+            'address': forms.TextInput(attrs={'class':'form-control'}),
+            'username':forms.TextInput(attrs={'class':'form-control','readonly':'','required':''}),
+            'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu','required':''}),
+            'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
+            "salary":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Lương nhân viên'}),
+            "position":forms.Select(choices=choices_position,attrs={'class': 'form-control'}),
+            "is_active":forms.Select(choices=choices_status,attrs={'class': 'form-control'}),
+        }
+
+# ------------------------------------------ End Employee Form ----------------------------------------------------

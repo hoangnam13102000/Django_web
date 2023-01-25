@@ -35,7 +35,7 @@
                 <td>{{ product.description }}</td>
                 {% comment %} <td>{{ product.is_active }}</td> {% endcomment %}
                 <td><a href="{% url 'edit_product' product.id %}" class="btn btn-primary"><span class=" glyphincon glyphicon-pencil">Sửa </span> </a>
-                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">
+                    <a href="{% url 'delete_product' product.id %}" class="btn btn-danger" onclick=" return confirm('Bạn có chắc chắn muốn xóa?');">
                         Xóa </i></a>
                 </td>
              </tr> 

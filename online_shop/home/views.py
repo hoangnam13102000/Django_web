@@ -10,7 +10,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.conf.urls import handler404
+from .serializers import ContactSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 # Create your views here.
+
+# ------------------------------------------ Begin Home Page ----------------------------------------------------
 
 # Home page
 def index(request):
@@ -30,48 +36,6 @@ def index(request):
     page_number2 = request.GET.get('page')
     page_obj2 = paginator2.get_page(page_number2)
     return render(request,'home/index.html',{'page_obj': page_obj,'categories':categories,'page_obj1': page_obj1,'page_obj2': page_obj2})
-
-# Admin page
-# @login_required(login_url='login')
-def index_admin(request):
-    cusromers = Customer.objects.all()
-    paginator = Paginator(cusromers, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    products = Product.objects.all()
-    paginator1 = Paginator(products, 5)
-    page_number1 = request.GET.get('page')
-    page_obj1 = paginator1.get_page(page_number1)
-    return render(request,'admin/index.html',{'page_obj': page_obj,'page_obj1': page_obj1})
-
-# Contact in home page
-def contact(request):
-    categories=Category.objects.all()
-    if request.method == 'POST':
-        if request.user.is_authenticated:
-            form = ContactForm(request.POST)
-            user= request.user
-            customer = Customer.objects.filter(username=user.username).first()
-            if form.is_valid():
-                new_form = form.save(commit=False) # không thực hiện lưu đối tượng ngay lập tức mà thay vào đó có thể chỉnh sửa giá trị trước khi lưu.
-                new_form.username = customer
-                new_form.save()
-                messages.success(request,'Phản hồi của bạn đã được gửi')
-                return redirect('contact')     
-        else:
-            messages.error(request,'Bạn cần đăng nhập để liên hệ với chúng tôi!')
-            return redirect('login')
-    form = ContactForm()
-    return render(request,'home/contact.html',{'categories':categories,'form':form})
-
-# Show list Contact admin
-def contact_list(request):
-    contacts = Contact.objects.all()
-    paginator = Paginator(contacts, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/contact_manager/contact_list.html', {'page_obj': page_obj})
-
 
 # Login page
 def login(request):
@@ -100,7 +64,7 @@ def login(request):
 
 # Register page
 def register(request):
-    form=forms.AddCustomer()
+    form=forms.RegisterForm()
     if(request.method=="POST"):
         form=forms.RegisterForm(request.POST)
         username=request.POST['username']
@@ -117,7 +81,7 @@ def register(request):
              messages.error(request,'Mật khẩu không trùng nhau!')
              return redirect('register')
         if(form.is_valid()):
-            user=User.objects.create_user(username,email,password)
+            User.objects.create_user(username,email,password)
             account=Customer(username=username,email=email,password=password)
             account.save()
             messages.success(request,'Đăng ký tài khoản thành công')
@@ -133,7 +97,66 @@ def logout(request):
     messages.success(request,'Đăng xuất thành công')
     return redirect('/')
 
+# Contact page
+def contact(request):
+    categories=Category.objects.all()
+    if request.method == 'POST':
+        if request.user.is_authenticated:
+            form = ContactForm(request.POST)
+            user= request.user
+            customer = Customer.objects.filter(username=user.username).first()
+            if form.is_valid():
+                new_form = form.save(commit=False) # không thực hiện lưu đối tượng ngay lập tức mà thay vào đó có thể chỉnh sửa giá trị trước khi lưu.
+                new_form.username = customer
+                new_form.save()
+                messages.success(request,'Phản hồi của bạn đã được gửi')
+                return redirect('contact')     
+        else:
+            messages.error(request,'Bạn cần đăng nhập để liên hệ với chúng tôi!')
+            return redirect('login')
+    form = ContactForm()
+    return render(request,'home/contact.html',{'categories':categories,'form':form})
 
 # def page_not_found(request, exception):
 #     return render(request, '404.html', {}, status=404)
 # handler404 = page_not_found
+
+# ------------------------------------------ End Home Page ----------------------------------------------------
+
+# ------------------------------------------ Begin Admin Page ----------------------------------------------------
+
+# Admin page
+# @login_required(login_url='login')
+def index_admin(request):
+    cusromers = Customer.objects.all()
+    paginator = Paginator(cusromers, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    products = Product.objects.all()
+    paginator1 = Paginator(products, 5)
+    page_number1 = request.GET.get('page')
+    page_obj1 = paginator1.get_page(page_number1)
+    return render(request,'admin/index.html',{'page_obj': page_obj,'page_obj1': page_obj1})
+
+
+# Show list Contact 
+def contact_list(request):
+    contacts = Contact.objects.all()
+    paginator = Paginator(contacts, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'admin/contact_manager/contact_list.html', {'page_obj': page_obj})
+
+
+# ------------------------------------------ End Admin Page ----------------------------------------------------
+
+# ------------------------------------------ Begin RestAPI ----------------------------------------------------
+
+# RestAPI Contact
+class  Contact_API_View(APIView):
+    def get(self,request):
+        listContact= Contact.objects.all()
+        Contactdata= ContactSerializer(listContact, many=True).data # Adding .data to convert the data from ListSerializer to JSON
+        return Response(data= Contactdata, status=status.HTTP_200_OK)
+    
+# ------------------------------------------ End RestAPI ----------------------------------------------------

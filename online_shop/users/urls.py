@@ -8,5 +8,8 @@ urlpatterns = [
      path('<int:id>/edit_customer_admin/' , views.edit_customer_admin, name='edit_customer_admin'),
      path('<int:id>/edit_info/' , views.edit_info, name='edit_info'),
      path('<int:id>/change_password/' , views.change_password, name='change_password'),
-     
+     path('employee_list/' , views.employee_list, name='employee_list'),
+     path('add_employee/' , views.add_employee, name='add_employee'),
+     path('<int:id>/delete_employee/' , views.delete_employee, name='delete_employee'),
+     path('<int:id>/edit_employee/' , views.edit_employee, name='edit_employee'),
 ]

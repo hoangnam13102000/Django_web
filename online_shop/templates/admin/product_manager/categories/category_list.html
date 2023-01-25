@@ -24,7 +24,7 @@
                 <td>{{ forloop.counter }}</td>
                 <td>{{ category.name }}</td>
                 <td><a href="{% url 'edit_category' category.id %}" class="btn btn-primary"><span class=" glyphincon glyphicon-pencil">Sửa</span></a>
-                    <a href="{% url 'delete_category' category.id %}" class="btn btn-danger">Xóa</a>
+                    <a href="{% url 'delete_category' category.id %}" class="btn btn-danger" onclick=" return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
                 </td>
             </tr>
         {% endfor %}

@@ -5,7 +5,13 @@ from django.contrib.auth.decorators import login_required
 from . models import  Category,Product,Comment
 from . forms import CategoryForm,ProductForm,CommentForm
 from . utils import handle_upload_file
+from .serializers import ProductSerializer,CategorySerializer,CommentSerializer #,CustomerCreationSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 # Create your views here.
+
+# ------------------------------------------ Begin Home Page ----------------------------------------------------
 
 # View Product in home page
 def product_view(request, id):
@@ -26,32 +32,39 @@ def product_view(request, id):
     form = CommentForm()
     return render(request, 'home/product_detail.html',{'product': product,'categories':categories, 'form': form,'comments':comments})
 
+# Show product depend on category
+def product_of_category(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    categories=Category.objects.all()
+    product=Product.objects.filter(category=category).all()
+    paginator = Paginator(product, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'home/shop_product_list.html', {'page_obj':page_obj,'categories':categories,'category':category})
+
+# Search product
+def search_products(request):
+    keyword = request.GET.get('keyword')
+    data = Product.objects.filter(title__icontains=keyword).order_by('-id')
+    categories=Category.objects.all()
+    return render(request, 'home/search.html', {'data': data,'categories':categories})
+
+# ------------------------------------------ End Home Page ----------------------------------------------------
+
+# ------------------------------------------ Begin Admin Page ----------------------------------------------------
+
+#                           -------------------- Product -----------------------
+
 # Show list Product admin
 def product_list(request):
     products = Product.objects.all()
     paginator = Paginator(products, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/product_manager/list_product.html', {'page_obj': page_obj})
+    return render(request, 'admin/product_manager/products/list_product.html', {'page_obj': page_obj})
 
-# Show list Comment admin
-def comment_list(request):
-    comments = Comment.objects.all()
-    paginator = Paginator(comments, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/comment_manager/comment_list.html', {'page_obj': page_obj})
 
-# Delete comment
-def delete_comment(request, comment_id):
-    # get id comment 
-    comment = Comment.objects.get(id=comment_id)
-    # Delete comment
-    comment.delete()
-    messages.success(request,'Xóa bình luận thành công')
-    return redirect('comment_list')
-
-# Add product in list
+# Add product into list
 def add_product(request):
     form = ProductForm()
     if request.method == 'POST':
@@ -67,7 +80,7 @@ def add_product(request):
             messages.error(request,'Thêm sản phẩm thất bại')
     else:
         form = ProductForm()
-    return render(request, 'admin/product_manager/add_product.html', {'form':form})
+    return render(request, 'admin/product_manager/products/add_product.html', {'form':form})
 
 # Edit product
 def edit_product(request,id):
@@ -80,7 +93,7 @@ def edit_product(request,id):
         return redirect("edit_product", id=product.id)
     else:
         form = ProductForm(instance=product)
-    return render(request, 'admin/product_manager/edit_product.html', {'form': form})
+    return render(request, 'admin/product_manager/products/edit_product.html', {'form': form})
 
 # Delete product
 def delete_product(request, id):
@@ -91,12 +104,7 @@ def delete_product(request, id):
     messages.success(request,'Xóa sản phẩm thành công')
     return redirect('product_list')
 
-# Search product
-def search_products(request):
-    query = request.GET.get('query')
-    data = Product.objects.filter(title__icontains=query).order_by('-id')
-    categories=Category.objects.all()
-    return render(request, 'home/search.html', {'data': data,'categories':categories})
+#                           -------------------- Category -----------------------
 
 # Show Category list
 def category_list(request):
@@ -104,7 +112,7 @@ def category_list(request):
     paginator = Paginator(categories, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/category_manager/category_list.html', {'page_obj': page_obj})
+    return render(request, 'admin/product_manager/categories/category_list.html', {'page_obj': page_obj})
 
 #Form add Category
 def addCategory(request):
@@ -121,7 +129,7 @@ def addCategory(request):
             return redirect('category_list')
     else:
         form = CategoryForm()
-    return render(request, 'admin/category_manager/add_category.html', {'form':form})
+    return render(request, 'admin/product_manager/categories/add_category.html', {'form':form})
 
 # Edit Category by id
 def edit_category(request,id):
@@ -133,7 +141,7 @@ def edit_category(request,id):
         return redirect("edit_category",id=category.id)
     else:
         form = CategoryForm(instance=category)
-    return render(request, 'admin/category_manager/edit_category.html', {'form': form})
+    return render(request, 'admin/product_manager/categories/edit_category.html', {'form': form})
 
 # Delete Category by id
 def delete_category(request, id):
@@ -144,15 +152,54 @@ def delete_category(request, id):
     messages.success(request,'Xóa loại sản phẩm thành công')
     return redirect('category_list')
 
-# Show product depend on category
-def product_of_category(request, category_id):
-    category = get_object_or_404(Category, id=category_id)
-    categories=Category.objects.all()
-    product=Product.objects.filter(category=category).all()
-    paginator = Paginator(product, 5)
+#                           -------------------- Comment -----------------------
+
+# Show list Comment admin
+def comment_list(request):
+    comments = Comment.objects.all()
+    paginator = Paginator(comments, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'home/shop_product_list.html', {'page_obj':page_obj,'categories':categories,'category':category})
+    return render(request, 'admin/product_manager/comments/comment_list.html', {'page_obj': page_obj})
+
+# Delete comment
+def delete_comment(request, comment_id):
+    # get id comment 
+    comment = Comment.objects.get(id=comment_id)
+    # Delete comment
+    comment.delete()
+    messages.success(request,'Xóa bình luận thành công')
+    return redirect('comment_list')
+
+# ------------------------------------------ End Admin Page ----------------------------------------------------
 
 
+# ------------------------------------------ Begin RestAPI ----------------------------------------------------
 
+# RestAPI  Product
+class Product_API_View(APIView):
+    def get(self,request):
+        listProduct= Product.objects.all()
+        Productdata= ProductSerializer(listProduct, many=True).data # Adding .data to convert the data from ListSerializer to JSON
+        return Response(data= Productdata, status=status.HTTP_200_OK)
+    # def post(self,request):
+    #    Productdata=ProductCreationSerializer(data=request.data)
+        
+    #     if(not Productdata.is_valid()):
+    #         return Response('Dữ liệu bị sai !', status=status.HTTP_400_BAD_REQUEST)
+
+# RestAPI Category
+class  Category_API_View(APIView):
+    def get(self,request):
+        listCategory= Category.objects.all()
+        Categorydata= CategorySerializer(listCategory, many=True).data # Adding .data to convert the data from ListSerializer to JSON
+        return Response(data= Categorydata, status=status.HTTP_200_OK)
+    
+# RestAPI Comment
+class  Comment_API_View(APIView):
+    def get(self,request):
+        listComment= Comment.objects.all()
+        Commentdata= CommentSerializer(listComment, many=True).data # Adding .data to convert the data from ListSerializer to JSON
+        return Response(data= Commentdata, status=status.HTTP_200_OK)
+    
+# ------------------------------------------ End RestAPI ----------------------------------------------------

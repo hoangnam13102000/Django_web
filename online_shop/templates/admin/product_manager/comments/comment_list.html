@@ -30,7 +30,7 @@
                 <td>{{ comment.comment_body }}</td>
                 <td>{{ comment.date_added }}</td>
                 <td>
-                    <a href="{% url 'delete_comment' comment.id %}" class="btn btn-danger">Xóa</a>
+                    <a href="{% url 'delete_comment' comment.id %}" class="btn btn-danger" onclick=" return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
                 </td>
             </tr>
         {% endfor %}

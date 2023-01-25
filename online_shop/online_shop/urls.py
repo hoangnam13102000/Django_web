@@ -17,13 +17,26 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+# from users.views import Customer_API_View
+# from products.views import Product_API_View,Category_API_View,Comment_API_View
+# from order.views import Order_API_View
+# from home.views import Contact_API_View
+
 # from django.conf.urls import handler404
 
 # handler404 = 'home.error_views.page_not_found'
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('django/', admin.site.urls),
     path('',include('home.urls'),name='home'),  
     path('user/',include('users.urls'),name='user'), 
     path('product/',include('products.urls'),name='product'),
     path('order/',include('order.urls'),name='order'),
+    
+    # Rest_API
+    # path('customer_api/',Customer_API_View.as_view()),
+    # path('product_api/',Product_API_View.as_view()),
+    # path('category_api/',Category_API_View.as_view()),
+    # path('comment_api/',Comment_API_View.as_view()),
+    # path('order_api/',Order_API_View.as_view()),
+    # path('contact_api/', Contact_API_View.as_view()),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -7,6 +7,12 @@ from .models import Order
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from products.models import  Category
+from .serializers import OrderSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+# ------------------------------------------ Begin Home Page ----------------------------------------------------
 
 # Add Product Into Cart 
 def add_to_cart(request, product_id):
@@ -101,6 +107,10 @@ def checkout(request):
         form = OrderForm()
     return render(request, 'home/view_cart.html', {'form':form,'categories':categories})
 
+# ------------------------------------------ End Home Page ----------------------------------------------------
+
+# ------------------------------------------ Begin Admin Page ----------------------------------------------------
+
 # Show Order list
 def order_list(request):
     order = Order.objects.all()
@@ -115,3 +125,16 @@ def delete_order(request,order_id):
     order.delete()
     messages.success(request,'Xóa đơn đặt hàng thành công')
     return redirect('order_list')
+
+# ------------------------------------------ End Admin Page ----------------------------------------------------
+
+# ------------------------------------------ Begin RestAPI ----------------------------------------------------
+
+# RestAPI Order
+class  Order_API_View(APIView):
+    def get(self,request):
+        listOrder= Order.objects.all()
+        Orderdata= OrderSerializer(listOrder, many=True).data # Adding .data to convert the data from ListSerializer to JSON
+        return Response(data= Orderdata, status=status.HTTP_200_OK)
+
+# ------------------------------------------ End RestAPI ----------------------------------------------------
