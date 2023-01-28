@@ -1,54 +1,99 @@
 {% extends 'admin/base.html' %} 
-{% load static %}
+{% load static %} 
 {% block main %}
 <div class="main-panel">
-    <div class="content">
-        <div class="page-inner">
-            <div class="mt-2 mb-4">
-                <h2 class="text-black pb-2">Xin chào, {{request.user}}</h2>
-            </div>
-  <div class="wrapper";>
-    <div class="container justify-content-around">
-        <div class="row">
-            <form action="{{'.'}}" class="col-md-12 bg-light p-3"  method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-                <h1 class="text-center text-uppercase h3">Cập nhập sản phẩm</h1>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Hình sản phẩm</h3></label>
-                    {{ form.image}}
-                </div>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Tên sản phẩm</h3></label>
-                    {{ form.title}}
-                </div>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Loại sản phẩm</h3></label>
-                    {{ form.category}}
-                </div>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Hãng</h3></label>
-                    {{ form.brand}}
-                </div>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Giá sản phẩm</h3></label>
-                    {{ form.price}}
-                </div>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Mô tả</h3></label>
-                    {{ form.description}}
-                </div>
-                <div class="form-group">
-                    <label for=""  class="text-uppercase h3"></h3>Active</h3></label>
-                    {{ form.is_active}}
-                </div>
-                <div class="form-group ">
-                  <input type="submit" value="Lưu" class="btn btn-block btn-primary">
-                  <a href="{% url 'product_list' %}" class="btn btn-block btn-primary">Quay lại</a>
+  <div class="content">
+    <div class="page-inner">
+      <div class="page-header">
+        <ul class="breadcrumbs">
+          <li class="nav-home">
+            <a href="{% url 'admin' %}">
+              <i class="flaticon-home"></i>
+            </a>
+          </li>
+          <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+          <a data-toggle="collapse" href="#product_manager">Quản lý sản phẩm</a>
+      </li>
+          <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'product_list' %}">Danh sách sản phẩm</a>
+          </li>
+          <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+          </li>
+          <li class="nav-item">
+            <a href="{{'.'}}">Cập nhập sản phẩm </a>
+          </li>
+          <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+          </li>
+          <li class="nav-item">
+            <a href="{{'.'}}"> {{ product.title }}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <center><b> Cập nhập sản phẩm </b></center>
               </div>
-            </form>
+            </div>
+            <div class="card-body">
+              <form action="{{'.'}}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-md-6 col-lg-6">
+                    <div class="form-group">
+                      <label for="email">Hình sản phẩm</label>
+                      <div class="input-group mb-3">{{ form.image}}</div>
+                    </div>
+                    <div class="form-group">
+                      <label for="fullname">Tên sản phẩm</label>
+                      {{ form.title}}
+                    </div>
+                    <div class="form-group">
+                      <label for="username">Loại sản phẩm</label>
+                      {{ form.category}}
+                    </div>
+                    <div class="form-group">
+                      <label for="">Hãng</label>
+                      {{ form.brand}}
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-lg-6">
+                    <div class="form-group">
+                      <label for="">Giá sản phẩm</label>
+                      {{ form.price}}
+                    </div>
+                    <div class="form-group">
+                      <label for="">Mô tả</label>
+                      {{ form.description}}
+                    </div>
+                    <div class="form-group">
+                      <label for="">Hoạt động</label>
+                      {{ form.is_active}}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <input type="submit" value="Lưu" class="btn-success btn" />
+                    <a href="{% url 'product_list' %}" class="btn btn-primary"
+                      >Quay lại</a
+                    >
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
   </div>
+  {% endblock %}
 </div>
-</div>
-{% endblock %}

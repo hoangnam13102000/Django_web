@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from products.models import Product
-from users.models import Customer
+from users.models import Customer,Employee
 from django.contrib import messages
 from .forms import OrderForm
 from .models import Order
@@ -103,7 +103,6 @@ def checkout(request):
             return redirect('cart')
     else:
         messages.error(request,'Bạn phải đăng nhập trước khi thanh toán')
-         
         form = OrderForm()
     return render(request, 'home/view_cart.html', {'form':form,'categories':categories})
 
@@ -113,11 +112,13 @@ def checkout(request):
 
 # Show Order list
 def order_list(request):
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     order = Order.objects.all()
     paginator = Paginator(order, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/orders_manager/order_list.html', {'page_obj':page_obj})
+    return render(request, 'admin/orders_manager/order_list.html', {'page_obj':page_obj,'employee':employee})
 
 # Delete order 
 def delete_order(request,order_id):

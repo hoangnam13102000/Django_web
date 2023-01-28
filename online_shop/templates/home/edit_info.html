@@ -7,6 +7,8 @@
         <li><a href="{% url 'edit_info' user.id %}">Thông tin {{request.user}}</a></li>
     </ul>
         <div class="row">
+          <div class="col-md-3">
+          </div>
             <form action="{{'.'}}" class="col-md-6 bg-light p-3" method="POST">
               {% csrf_token %}
               <h1 class="text-center text-uppercase h3">thông tin {{request.user}}</h1>
@@ -40,6 +42,8 @@
               </div>
               
             </form>
+            <div class="col-md-3">
+            </div>
         </div>
     </div>
   </div>

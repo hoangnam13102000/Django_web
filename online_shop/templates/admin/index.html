@@ -2,11 +2,17 @@
 {% load static %} 
 {% block main %}
 <div class="main-panel">
-    <div class="content">
-        <div class="page-inner">
-            <div class="mt-2 mb-4">
-                <h2 class="text-black pb-2">Welcome back, {{request.user}}</h2>
-            </div>
+  <div class="content">
+  <div class="page-inner">
+  <div class="page-header">
+      <h4 class="page-title">Chào mừng {{request.user}}</h4>
+      <ul class="breadcrumbs">
+          <li class="nav-home">
+              <a href="{% url 'admin' %}">
+                  <i class="flaticon-home"></i>
+              </a>
+          </li>
+  </div>
 <table class="table">
     <h1 class="text-center text-uppercase h3">Danh sách khách hàng</h1>
     <thead>

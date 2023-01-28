@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
+from users.models import Employee
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from . models import  Category,Product,Comment
@@ -53,20 +54,23 @@ def search_products(request):
 
 # ------------------------------------------ Begin Admin Page ----------------------------------------------------
 
-#                           -------------------- Product -----------------------
 
 # Show list Product admin
 def product_list(request):
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     products = Product.objects.all()
     paginator = Paginator(products, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/product_manager/products/list_product.html', {'page_obj': page_obj})
+    return render(request, 'admin/product_manager/products/list_product.html', {'page_obj': page_obj,'employee':employee})
 
 
 # Add product into list
 def add_product(request):
     form = ProductForm()
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -80,10 +84,12 @@ def add_product(request):
             messages.error(request,'Thêm sản phẩm thất bại')
     else:
         form = ProductForm()
-    return render(request, 'admin/product_manager/products/add_product.html', {'form':form})
+    return render(request, 'admin/product_manager/products/add_product.html', {'form':form,'employee':employee})
 
 # Edit product
 def edit_product(request,id):
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     product = get_object_or_404(Product, id=id)
     form =ProductForm(request.POST, request.FILES,instance=product)
     if form.is_valid():
@@ -93,7 +99,7 @@ def edit_product(request,id):
         return redirect("edit_product", id=product.id)
     else:
         form = ProductForm(instance=product)
-    return render(request, 'admin/product_manager/products/edit_product.html', {'form': form})
+    return render(request, 'admin/product_manager/products/edit_product.html', {'form': form,'employee':employee, 'product':product})
 
 # Delete product
 def delete_product(request, id):
@@ -108,15 +114,19 @@ def delete_product(request, id):
 
 # Show Category list
 def category_list(request):
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     categories = Category.objects.all()
     paginator = Paginator(categories, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/product_manager/categories/category_list.html', {'page_obj': page_obj})
+    return render(request, 'admin/product_manager/categories/category_list.html', {'page_obj': page_obj,'employee':employee})
 
 #Form add Category
 def addCategory(request):
     form=CategoryForm()
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         name=request.POST['name']
@@ -129,10 +139,12 @@ def addCategory(request):
             return redirect('category_list')
     else:
         form = CategoryForm()
-    return render(request, 'admin/product_manager/categories/add_category.html', {'form':form})
+    return render(request, 'admin/product_manager/categories/add_category.html', {'form':form,'employee':employee})
 
 # Edit Category by id
 def edit_category(request,id):
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     category=get_object_or_404(Category, id=id)
     form =CategoryForm(request.POST,instance=category)
     if form.is_valid():
@@ -141,7 +153,7 @@ def edit_category(request,id):
         return redirect("edit_category",id=category.id)
     else:
         form = CategoryForm(instance=category)
-    return render(request, 'admin/product_manager/categories/edit_category.html', {'form': form})
+    return render(request, 'admin/product_manager/categories/edit_category.html', {'form': form,'employee':employee,'category':category})
 
 # Delete Category by id
 def delete_category(request, id):
@@ -156,11 +168,13 @@ def delete_category(request, id):
 
 # Show list Comment admin
 def comment_list(request):
+    user=request.user
+    employee =Employee.objects.filter(username=user.username).first()
     comments = Comment.objects.all()
     paginator = Paginator(comments, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/product_manager/comments/comment_list.html', {'page_obj': page_obj})
+    return render(request, 'admin/product_manager/comments/comment_list.html', {'page_obj': page_obj,'employee':employee})
 
 # Delete comment
 def delete_comment(request, comment_id):
@@ -176,6 +190,8 @@ def delete_comment(request, comment_id):
 
 # ------------------------------------------ Begin RestAPI ----------------------------------------------------
 
+#                           -------------------- Product -----------------------
+
 # RestAPI  Product
 class Product_API_View(APIView):
     def get(self,request):
@@ -188,13 +204,17 @@ class Product_API_View(APIView):
     #     if(not Productdata.is_valid()):
     #         return Response('Dữ liệu bị sai !', status=status.HTTP_400_BAD_REQUEST)
 
+#                           -------------------- Category -----------------------
+
 # RestAPI Category
 class  Category_API_View(APIView):
     def get(self,request):
         listCategory= Category.objects.all()
         Categorydata= CategorySerializer(listCategory, many=True).data # Adding .data to convert the data from ListSerializer to JSON
         return Response(data= Categorydata, status=status.HTTP_200_OK)
-    
+
+#                           -------------------- Product -----------------------
+
 # RestAPI Comment
 class  Comment_API_View(APIView):
     def get(self,request):
