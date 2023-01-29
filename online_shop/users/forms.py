@@ -73,8 +73,9 @@ class AddCustomerForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model=Customer
-        fields= ["fullname","gender","address","phone", "email","username","password"]
+        fields= ["fullname","gender","address","phone", "email","username","password","is_active"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_status=(('True','Hoạt động'),('False','Không hoạt động'))
         widgets={
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
@@ -83,6 +84,7 @@ class CustomerForm(forms.ModelForm):
             'username':forms.TextInput(attrs={'class':'form-control','readonly':'','required':''}),
             'password':forms.TextInput(attrs={'class':'form-control','placeholder':'Mật khẩu','required':''}),
             'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
+            "is_active":forms.Select(choices=choices_status,attrs={'class': 'form-control'}),
         }
 
 # Search Employee Form
@@ -119,7 +121,7 @@ class EmployeeForm(forms.ModelForm):
         fields= ["fullname","gender","address","phone", "email","username","password","salary","position","is_active"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
         choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
-        choices_status=(('True','Hoạt động'),('False','Dừng hoạt động'))
+        choices_status=(('True','Hoạt động'),('False','Không hoạt động'))
         widgets={
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),

@@ -35,7 +35,7 @@
                     Danh sách nhân viên
                   </h4>
                   <a href="{% url 'add_employee' %}" class="btn btn-info btn-round ml-auto"
-                  > <i class="fa fa-plus"></i> Thêm nhân viên</a
+                  > <i class="fas fa-user-plus"></i> Thêm nhân viên</a
                 >
                 </div>
             </div>
@@ -85,7 +85,7 @@
                         <th>Lương</th>
                         <th>Username</th>
                         <th>Password</th>
-                        <th>Ngày vào làm</th>
+                        <th>Trạng thái</th>
                         <th style="width: 13%">Tùy chọn</th>
                       </tr>
                     </thead>
@@ -102,7 +102,7 @@
                         <td>{{ employee.salary }}</td>
                         <td>{{ employee.username }}</td>
                         <td>{{ employee.password}}</td>
-                        <td>{{ employee.start_date}}</td>
+                        <td>{% if  employee.is_active == True %} Hoạt động {% else %} Khóa{% endif %}</td>
                         <td>
                           <a
                             href="{% url 'edit_employee' employee.id %}"

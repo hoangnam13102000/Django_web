@@ -125,20 +125,16 @@ def edit_customer_admin(request,id):
     user=User.objects.filter(username=customer.username).first()
     form =CustomerForm(request.POST or None,instance=customer)
     if request.method == 'POST':
-        # old_password = request.POST.get('old_password')
         new_password = request.POST.get('password')
-        confirm_password = request.POST.get('password2')
+        is_active=request.POST.get('is_active')
         if form.is_valid():
-            if new_password != confirm_password:
-                messages.error(request, 'Mật khẩu không trùng nhau!')
-                return redirect('.')
-            else:
-                form.save()
-                password=make_password(new_password,hasher='default')
-                user.password=password
-                user.save()
-                messages.success(request,'Đã cập nhập khách hàng thành công')
-                return redirect("customer_list")
+            form.save()
+            password=make_password(new_password,hasher='default')
+            user.password=password
+            user.is_active=is_active
+            user.save()
+            messages.success(request,'Đã cập nhập khách hàng thành công')
+            return redirect("customer_list")
     else:
         form = CustomerForm(instance=customer)
     return render(request, 'admin/user_manager/customers/edit_customer.html', {'form':form,'categories':categories,'employee':employee,'customer':customer})
@@ -233,11 +229,13 @@ def edit_employee(request,id):
     if request.method == 'POST':
         new_password = request.POST.get('password')
         position=request.POST.get('position')
+        is_active=request.POST.get('is_active')
         if form.is_valid():
             form.save()
             user.is_superuser = True if position == 'Quản lý' else False
             password=make_password(new_password,hasher='default')
             user.password=password
+            user.is_active=is_active
             user.save()
             messages.success(request,'Đã cập nhập nhân viên thành công')
             return redirect('edit_employee', id=employee.id)

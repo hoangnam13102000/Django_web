@@ -10,6 +10,7 @@ class Customer(models.Model):
     address=models.CharField(max_length=100,null=True)
     phone=models.CharField(max_length=20,null=True)
     gender=models.CharField(max_length=20,null=True,help_text="0=Nam, 1=Nữ")
+    is_active = models.BooleanField(default=True)
     class Meta:
         db_table='Customer'
     def __str__(self):

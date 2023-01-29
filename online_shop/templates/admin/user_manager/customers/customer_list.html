@@ -34,7 +34,7 @@
                   <h4 class=" text-uppercase card-title ">
                     Danh sách khách hàng
                   </h4>
-                  <a href="{% url 'add_user' %}" class="btn btn-info btn-round ml-auto"> <i class="fa fa-plus"></i> Thêm khách hàng</a>
+                  <a href="{% url 'add_user' %}" class="btn btn-info btn-round ml-auto"> <i class="fas fa-user-plus"></i> Thêm khách hàng</a>
                 </div>
             </div>
             <div class="card-body">
@@ -80,6 +80,7 @@
               <th>Địa chỉ</th>
               <th>Username</th>
               <th>Password</th>
+              <th>Trạng thái</th>
               <th>Tùy chọn</th>
             </tr>
           </thead>
@@ -99,6 +100,7 @@
             <td>{{ customer.address }}</td>
             <td>{{ customer.username }}</td>
             <td>{{ customer.password}}</td>
+            <td>{% if  customer.is_active == True %} Hoạt động {% else %} Khóa {% endif %}</td>
             <td>
               <a
                 href="{% url 'edit_customer_admin' customer.id %}"
