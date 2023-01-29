@@ -30,6 +30,7 @@ urlpatterns = [
 #                      -------------------- Concact -----------------------
 
     path('contact_list/', views.contact_list, name='contact_list'),
+    path('search_contact/', views.search_contact, name='search_contact'),
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 ]

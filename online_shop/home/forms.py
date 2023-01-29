@@ -11,3 +11,8 @@ class ContactForm(forms.ModelForm):
             'customer_email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
             'content': forms.TextInput(attrs={'class': 'form-control','placeholder':'Đừng ngại hỏi về đơn hàng của bạn','required':''}),
         }
+
+# Search Contact Form
+class SearchContactForm(forms.Form):
+    choices_type=(('Tên khách hàng','Tên khách hàng'),('Email','Email'))
+    search_type=forms.CharField(widget=forms.Select(choices=choices_type,attrs={'class':'form-control'}))

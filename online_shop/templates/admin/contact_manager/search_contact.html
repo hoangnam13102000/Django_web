@@ -15,13 +15,19 @@
             <i class="flaticon-right-arrow"></i>
         </li>
         <li class="nav-item">
-          <a data-toggle="collapse" href="#user_manager">Quản lý người dùng</a>
+          <a data-toggle="collapse" href="#contact">Quản lý phản hồi</a>
+      </li>
+          <li class="separator">
+            <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+          <a  href="{% url 'contact_list' %}">Danh sách phản hồi</a>
       </li>
           <li class="separator">
             <i class="flaticon-right-arrow"></i>
           </li>
           <li class="nav-item">
-            <a href="{% url 'employee_list' %}">Danh sách nhân viên</a>
+            <a href="#">Tìm kiếm</em></a>
           </li>
         </ul>
       </div>
@@ -32,15 +38,12 @@
               <div class="table-responsive">
                 <div class="d-flex align-items-center">
                   <h4 class=" text-uppercase card-title">
-                    Danh sách nhân viên
+                      Tìm kiếm phản hồi khách hàng theo '<em>{{request.GET.search_type}}</em> '  với từ khóa:  '<em>{{request.GET.keyword}}</em> ' 
                   </h4>
-                  <a href="{% url 'add_employee' %}" class="btn btn-info btn-round ml-auto"
-                  > <i class="fa fa-plus"></i> Thêm nhân viên</a
-                >
                 </div>
             </div>
             <div class="card-body">
-              <form action="{% url 'search_employee' %}" >
+              <form action="{% url 'search_contact' %}" >
               <div class="row">
                 <div class="col-md-4">
                   <div class="row">
@@ -57,6 +60,7 @@
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-4">
+                  
                     <div class="input-group mb-3">
                       <div class="input-group-prepend">
                           <span class="input-group-text" id="basic-addon1"> <i class="fa fa-search search-icon"></i></span>
@@ -66,8 +70,8 @@
                         <button class="btn btn-primary" type="submit">Tìm kiếm</button>
                       </span>
                     </div>
-                  </form>
                 </div>
+            </form>
                 <div class="table-responsive">
                   <table
                     id="add-row"
@@ -76,43 +80,30 @@
                     <thead>
                       <tr>
                         <th>STT</th>
-                        <th>Tên nhân viên</th>
-                        <th>Giới tính</th>
-                        <th>Email</th>
-                        <th>Số điện thoại</th>
-                        <th>Địa chỉ</th>
-                        <th>Chức vụ</th>
-                        <th>Lương</th>
+                        <th>Tên khách hàng</th>
                         <th>Username</th>
-                        <th>Password</th>
-                        <th>Ngày vào làm</th>
-                        <th style="width: 13%">Tùy chọn</th>
+                        <th>Email</th>
+                        <th>Nội dung</th>
+                        {% comment %}
+                        <th>Active</th>
+                        {% endcomment %}
+                        <th>Tùy chọn</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {% for employee in page_obj %}
+                        {% for contact in data %}
                       <tr>
                         <td>{{ forloop.counter }}</td>
-                        <td>{{ employee.fullname }}</td>
-                        <td>{{ employee.gender }}</td>
-                        <td>{{ employee.email }}</td>
-                        <td>{{ employee.phone }}</td>
-                        <td>{{ employee.address }}</td>
-                        <td>{{ employee.position}}</td>
-                        <td>{{ employee.salary }}</td>
-                        <td>{{ employee.username }}</td>
-                        <td>{{ employee.password}}</td>
-                        <td>{{ employee.start_date}}</td>
+                        <td>{{ contact.customer_name }}</td>
+                        <td>{{ contact.username }}</td>
+                        <td>{{contact.customer_email }}</td>
+                        <td>{{ contact.content}}</td>
+                        {% comment %}
+                        <td>{{ order.is_active }}</td>
+                        {% endcomment %}
                         <td>
                           <a
-                            href="{% url 'edit_employee' employee.id %}"
-                            class="btn btn-info"
-                            ><span class="glyphincon glyphicon-pencil"
-                              >Sửa</span
-                            ></a
-                          >
-                          <a
-                            href="{% url 'delete_employee' employee.id %}"
+                            href=" {% comment %}{% url 'delete_order' order.id %}{% endcomment %}"
                             class="btn btn-danger"
                             onclick=" return confirm('Bạn có chắc chắn muốn xóa?');"
                             >Xóa</a
@@ -122,21 +113,6 @@
                       {% endfor %}
                     </tbody>
                   </table>
-                <nav aria-label="...">
-    <ul class="pagination justify-content-center ">
-        {% if page_obj.has_previous %}
-      <li class="page-item step-links">
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}"> << </a>
-      </li>
-      {% endif %}
-      <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
-      {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}"> >> </a>
-      </li>
-      {% endif %}
-    </ul>
-  </nav>
                 </div>
               </div>
             </div>

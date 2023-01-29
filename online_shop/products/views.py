@@ -4,7 +4,7 @@ from users.models import Employee
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from . models import  Category,Product,Comment
-from . forms import CategoryForm,ProductForm,CommentForm
+from . forms import CategoryForm,ProductForm,CommentForm, SearchProductForm, SearchCommentForm
 from . utils import handle_upload_file
 from .serializers import ProductSerializer,CategorySerializer,CommentSerializer #,CustomerCreationSerializer
 from rest_framework.views import APIView
@@ -59,11 +59,12 @@ def search_products(request):
 def product_list(request):
     user=request.user
     employee =Employee.objects.filter(username=user.username).first()
+    search_form= SearchProductForm()
     products = Product.objects.all()
     paginator = Paginator(products, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/product_manager/products/list_product.html', {'page_obj': page_obj,'employee':employee})
+    return render(request, 'admin/product_manager/products/list_product.html', {'page_obj': page_obj,'employee':employee,'search_form':search_form})
 
 
 # Add product into list
@@ -109,6 +110,17 @@ def delete_product(request, id):
     product.delete()
     messages.success(request,'Xóa sản phẩm thành công')
     return redirect('product_list')
+
+# Search product admin
+def search_product_admin(request):
+    search_type=request.GET.get('search_type')
+    keyword = request.GET.get('keyword')
+    search_form= SearchProductForm()
+    if search_type == "Thương hiệu":
+        data = Product.objects.filter(brand__icontains=keyword).order_by('-id')
+    else:
+        data = Product.objects.filter(title__icontains=keyword).order_by('-id')
+    return render(request, 'admin/product_manager/products/search_product.html', {'data':data ,'search_form':search_form})
 
 #                           -------------------- Category -----------------------
 
@@ -164,17 +176,24 @@ def delete_category(request, id):
     messages.success(request,'Xóa loại sản phẩm thành công')
     return redirect('category_list')
 
+# Search Category
+def search_category(request):
+    keyword = request.GET.get('keyword')
+    data = Category.objects.filter(name__icontains=keyword).order_by('-id')
+    return render(request, 'admin/product_manager/categories/search_category.html', {'data':data })
+
 #                           -------------------- Comment -----------------------
 
 # Show list Comment admin
 def comment_list(request):
     user=request.user
     employee =Employee.objects.filter(username=user.username).first()
+    search_form= SearchCommentForm()
     comments = Comment.objects.all()
     paginator = Paginator(comments, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/product_manager/comments/comment_list.html', {'page_obj': page_obj,'employee':employee})
+    return render(request, 'admin/product_manager/comments/comment_list.html', {'page_obj': page_obj,'employee':employee,'search_form':search_form})
 
 # Delete comment
 def delete_comment(request, comment_id):
@@ -184,6 +203,16 @@ def delete_comment(request, comment_id):
     comment.delete()
     messages.success(request,'Xóa bình luận thành công')
     return redirect('comment_list')
+
+def search_comment(request):
+    search_type=request.GET.get('search_type')
+    keyword = request.GET.get('keyword')
+    search_form= SearchCommentForm()
+    if search_type == "Email":
+        data = Comment.objects.filter(commenter_email__icontains=keyword).order_by('-id')
+    else:
+        data = Comment.objects.filter(commenter_name__icontains=keyword).order_by('-id')
+    return render(request, 'admin/product_manager/comments/search_comment.html', {'data':data ,'search_form':search_form})
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

@@ -23,6 +23,7 @@ urlpatterns = [
 
     path('order_list/', views.order_list, name = 'order_list'),
     path('<int:order_id>/delete_order/', views.delete_order, name = 'delete_order'),
+    path('search_order/', views.search_order, name='search_order'),
     
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 ]

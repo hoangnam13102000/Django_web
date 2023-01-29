@@ -84,7 +84,11 @@ class CustomerForm(forms.ModelForm):
             'password':forms.TextInput(attrs={'class':'form-control','placeholder':'Mật khẩu','required':''}),
             'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
         }
-        
+
+# Search Employee Form
+class SearchCustomerForm(forms.Form):
+    choices_type=(('Họ tên','Họ tên'),('username','username'),('Số điện thoại','Số điện thoại'),('email','email'),('Địa chỉ','Địa chỉ'))
+    search_type=forms.CharField(widget=forms.Select(choices=choices_type,attrs={'class':'form-control'}))
 
 #                           -------------------- Employee Forms  -----------------------
 
@@ -146,5 +150,10 @@ class ProfileEmployeeForm(forms.ModelForm):
             "salary":forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Lương nhân viên','readonly':''}),
             "position":forms.TextInput(attrs={'class': 'form-control','readonly':'' }),
         }
-        
+
+# Search Employee Form
+class SearchEmployeeForm(forms.Form):
+    choices_type=(('Họ tên','Họ tên'),('username','username'),('Số điện thoại','Số điện thoại'),('email','email'),('Địa chỉ','Địa chỉ'))
+    search_type=forms.CharField(widget=forms.Select(choices=choices_type,attrs={'class':'form-control'}))
+
 # ------------------------------------------ End Admin Page Forms ----------------------------------------------------

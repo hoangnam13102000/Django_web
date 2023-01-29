@@ -19,9 +19,15 @@
       </li>
           <li class="separator">
             <i class="flaticon-right-arrow"></i>
+        </li>
+        <li class="nav-item">
+          <a  href="{% url 'employee_list' %}">Danh sách nhân viên</a>
+      </li>
+          <li class="separator">
+            <i class="flaticon-right-arrow"></i>
           </li>
           <li class="nav-item">
-            <a href="{% url 'employee_list' %}">Danh sách nhân viên</a>
+            <a href="#">Tìm kiếm</em></a>
           </li>
         </ul>
       </div>
@@ -32,11 +38,8 @@
               <div class="table-responsive">
                 <div class="d-flex align-items-center">
                   <h4 class=" text-uppercase card-title">
-                    Danh sách nhân viên
+                    Tìm kiếm nhân viên theo'<em>{{request.GET.search_type}}</em> ' với từ khóa:  '<em>{{request.GET.keyword}}</em> ' 
                   </h4>
-                  <a href="{% url 'add_employee' %}" class="btn btn-info btn-round ml-auto"
-                  > <i class="fa fa-plus"></i> Thêm nhân viên</a
-                >
                 </div>
             </div>
             <div class="card-body">
@@ -57,6 +60,7 @@
                 <div class="col-md-4">
                 </div>
                 <div class="col-md-4">
+                  
                     <div class="input-group mb-3">
                       <div class="input-group-prepend">
                           <span class="input-group-text" id="basic-addon1"> <i class="fa fa-search search-icon"></i></span>
@@ -90,7 +94,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {% for employee in page_obj %}
+                      {% for employee in data  %}
                       <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ employee.fullname }}</td>
@@ -122,21 +126,6 @@
                       {% endfor %}
                     </tbody>
                   </table>
-                <nav aria-label="...">
-    <ul class="pagination justify-content-center ">
-        {% if page_obj.has_previous %}
-      <li class="page-item step-links">
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}"> << </a>
-      </li>
-      {% endif %}
-      <li class="page-item"><a class="page-link" href="#">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
-      {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}"> >> </a>
-      </li>
-      {% endif %}
-    </ul>
-  </nav>
                 </div>
               </div>
             </div>

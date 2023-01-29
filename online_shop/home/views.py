@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from users import forms
 from .models import Contact
-from .forms import ContactForm
+from .forms import ContactForm,SearchContactForm
 from users.models import Customer,Employee
 from products.forms import Product, Category
 from django.contrib.auth.models import User
@@ -35,7 +35,15 @@ def index(request):
     paginator2 = Paginator(product_best_seller2, 2)
     page_number2 = request.GET.get('page')
     page_obj2 = paginator2.get_page(page_number2)
-    return render(request,'home/index.html',{'page_obj': page_obj,'categories':categories,'page_obj1': page_obj1,'page_obj2': page_obj2})
+    cart_items = []
+    total = 0
+    if 'cart' in request.session:
+        for item in request.session['cart']:
+            # product = get_object_or_404(Product, pk=item['id'])
+            item['total_price'] = item['price'] * item['quantity']
+            total += item['total_price']
+            cart_items.append(item)
+    return render(request,'home/index.html',{'page_obj': page_obj,'categories':categories,'page_obj1': page_obj1,'page_obj2': page_obj2,'cart_items': cart_items})
 
 # Login page
 def login(request):
@@ -119,6 +127,7 @@ def contact(request):
     form = ContactForm()
     return render(request,'home/contact.html',{'categories':categories,'form':form})
 
+
 # ERROR NOT FOUND PAGE
 # def page_not_found(request):
 #     return render(request, 'home/404.html')
@@ -151,12 +160,24 @@ def index_admin(request):
 def contact_list(request):
     user=request.user
     employee =Employee.objects.filter(username=user.username).first()
+    search_form= SearchContactForm()
     contacts = Contact.objects.all()
     paginator = Paginator(contacts, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/contact_manager/contact_list.html', {'page_obj': page_obj,'employee':employee})
+    return render(request, 'admin/contact_manager/contact_list.html', {'page_obj': page_obj,'employee':employee,'search_form':search_form})
 
+
+# Search Contact
+def search_contact(request):
+    search_type=request.GET.get('search_type')
+    keyword = request.GET.get('keyword')
+    search_form= SearchContactForm()
+    if search_type == "Email":
+        data = Contact.objects.filter(customer_email__icontains=keyword).order_by('-id')
+    else:
+        data = Contact.objects.filter(customer_name__icontains=keyword).order_by('-id')
+    return render(request, 'admin/contact_manager/search_contact.html', {'data':data ,'search_form':search_form})
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

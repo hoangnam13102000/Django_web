@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import Customer, Employee
 from products.models import Category
 from django.core.paginator import Paginator
-from .forms import AddCustomerForm,AddEmployeeForm,EmployeeForm,ProfileEmployeeForm
+from .forms import AddCustomerForm,AddEmployeeForm,EmployeeForm,ProfileEmployeeForm,SearchEmployeeForm,SearchCustomerForm
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate
 from .serializers import CustomerSerializer #,CustomerCreationSerializer
@@ -72,13 +72,14 @@ def change_password(request, id):
 
 # Show Customer list
 def customer_list(request):
+    search_form= SearchCustomerForm()
     user=request.user
     employee =Employee.objects.filter(username=user.username).first()
     customer = Customer.objects.all()
     paginator = Paginator(customer, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/user_manager/customers/customer_list.html', {'page_obj':page_obj,'employee':employee })
+    return render(request, 'admin/user_manager/customers/customer_list.html', {'page_obj':page_obj,'employee':employee,'search_form':search_form })
 
 # add info customer
 def add_user(request):
@@ -151,17 +152,35 @@ def delete_customer(request,id):
     messages.success(request,'Xóa khách hàng thành công')
     return redirect('customer_list')
 
+# Search customer
+def search_customer(request):
+    search_type=request.GET.get('search_type')
+    keyword = request.GET.get('keyword')
+    search_form= SearchCustomerForm()
+    if search_type == "email":
+        data = Customer.objects.filter(email__icontains=keyword).order_by('-id')
+    elif search_type == "username":
+        data = Customer.objects.filter(username__icontains=keyword).order_by('-id')
+    elif search_type == "Số điện thoại":
+        data = Customer.objects.filter(phone__icontains=keyword).order_by('-id')
+    elif search_type == "Địa chỉ":
+        data = Customer.objects.filter(address__icontains=keyword).order_by('-id')
+    else:
+        data = Customer.objects.filter(fullname__icontains=keyword).order_by('-id')
+    return render(request, 'admin/user_manager/customers/search_customer.html', {'data':data ,'search_form':search_form})
+
 #                           -------------------- Employee -----------------------
 
 # Show Employee list
 def employee_list(request):
     user=request.user
     employee =Employee.objects.filter(username=user.username).first()
+    search_form= SearchEmployeeForm()
     employees = Employee.objects.all()
     paginator = Paginator(employees , 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/user_manager/employees/employee_list.html', {'page_obj':page_obj,'employee':employee})
+    return render(request, 'admin/user_manager/employees/employee_list.html', {'page_obj':page_obj,'employee':employee,'search_form':search_form})
 
 # add Employee
 def add_employee(request):
@@ -227,6 +246,32 @@ def edit_employee(request,id):
         form = EmployeeForm(instance=employee)
     return render(request, 'admin/user_manager/employees/edit_employee.html', {'form':form,'employee':employee})
 
+# Delete employee 
+def delete_employee(request,id):
+    employee=Employee.objects.get(id=id)
+    account=User.objects.filter(username=employee.username)
+    account.delete()
+    employee.delete()
+    messages.success(request,'Xóa nhân viên thành công')
+    return redirect('employee_list')
+
+# Search Employee
+def search_employee(request):
+    search_type=request.GET.get('search_type')
+    keyword = request.GET.get('keyword')
+    search_form= SearchEmployeeForm()
+    if search_type == "email":
+        data = Employee.objects.filter(email__icontains=keyword).order_by('-id')
+    elif search_type == "username":
+        data = Employee.objects.filter(username__icontains=keyword).order_by('-id')
+    elif search_type == "Số điện thoại":
+        data = Employee.objects.filter(phone__icontains=keyword).order_by('-id')
+    elif search_type == "Địa chỉ":
+        data = Employee.objects.filter(address__icontains=keyword).order_by('-id')
+    else:
+        data = Employee.objects.filter(fullname__icontains=keyword).order_by('-id')
+    return render(request, 'admin/user_manager/employees/search_employee.html', {'data':data ,'search_form':search_form})
+
 # View & Edit Profile employee
 def profile_employee(request,id):
     employee = get_object_or_404(Employee, id=id)
@@ -244,15 +289,6 @@ def profile_employee(request,id):
     else:
         form = ProfileEmployeeForm(instance=employee)
     return render(request, 'admin/user_manager/employees/profile_employee/profile_employee.html', {'form':form,'employee':employee})
-
-# Delete employee 
-def delete_employee(request,id):
-    employee=Employee.objects.get(id=id)
-    account=User.objects.filter(username=employee.username)
-    account.delete()
-    employee.delete()
-    messages.success(request,'Xóa nhân viên thành công')
-    return redirect('employee_list')
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

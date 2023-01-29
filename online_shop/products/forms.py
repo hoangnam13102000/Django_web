@@ -1,6 +1,7 @@
 from django import forms
 from . models import Category,Comment,Product
 
+#                           -------------------- Product Forms  -----------------------
 # Form Product
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -15,7 +16,14 @@ class ProductForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-control'}),
             'brand': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Hãng'}),
         }
-         
+
+# Search Product Form
+class SearchProductForm(forms.Form):
+    choices_type=(('Tên sản phẩm','Tên sản phẩm'),('Thương hiệu','Thương hiệu'))
+    search_type=forms.CharField(widget=forms.Select(choices=choices_type,attrs={'class':'form-control'}))
+
+#                           -------------------- Category Forms  -----------------------
+
 # Form Category
 class CategoryForm(forms.ModelForm):
     class Meta:
@@ -24,6 +32,8 @@ class CategoryForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Loại sản phẩm'})
         }
+
+#                           -------------------- Comment Forms  -----------------------
 
 # Form Comment
 class CommentForm(forms.ModelForm):
@@ -35,3 +45,9 @@ class CommentForm(forms.ModelForm):
             'commenter_email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
             'comment_body': forms.TextInput(attrs={'class': 'form-control','placeholder':'Nhận xét','required':''}),
         }
+
+
+# Search Product Form
+class SearchCommentForm(forms.Form):
+    choices_type=(('Tên khách hàng','Tên khách hàng'),('Email','Email'))#,('Sản phẩm','Sản phẩm'))
+    search_type=forms.CharField(widget=forms.Select(choices=choices_type,attrs={'class':'form-control'}))

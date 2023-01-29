@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from products.models import Product
 from users.models import Customer,Employee
 from django.contrib import messages
-from .forms import OrderForm
+from .forms import OrderForm,SearchOrderForm
 from .models import Order
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
@@ -114,11 +114,12 @@ def checkout(request):
 def order_list(request):
     user=request.user
     employee =Employee.objects.filter(username=user.username).first()
+    search_form= SearchOrderForm()
     order = Order.objects.all()
     paginator = Paginator(order, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/orders_manager/order_list.html', {'page_obj':page_obj,'employee':employee})
+    return render(request, 'admin/orders_manager/order_list.html', {'page_obj':page_obj,'employee':employee,'search_form':search_form})
 
 # Delete order 
 def delete_order(request,order_id):
@@ -126,6 +127,19 @@ def delete_order(request,order_id):
     order.delete()
     messages.success(request,'Xóa đơn đặt hàng thành công')
     return redirect('order_list')
+
+# Search Order
+def search_order(request):
+    search_type=request.GET.get('search_type')
+    keyword = request.GET.get('keyword')
+    search_form= SearchOrderForm()
+    if search_type == "Địa chỉ":
+        data = Order.objects.filter(shipping_address__icontains=keyword).order_by('-id')
+    elif search_type == "Số điện thoại":
+        data = Order.objects.filter(phone_number__icontains=keyword).order_by('-id')
+    else:
+        data = Order.objects.filter(customer_name__icontains=keyword).order_by('-id')
+    return render(request, 'admin/orders_manager/search_order.html', {'data':data ,'search_form':search_form})
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

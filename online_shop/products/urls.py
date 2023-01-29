@@ -22,6 +22,7 @@ urlpatterns = [
      path('addCategory/' , views.addCategory, name='addCategory'),
      path('<int:id>/edit_category/', views.edit_category, name='edit_category'),
      path('delete/<int:id>', views.delete_category, name='delete_category'),
+     path('search_category/', views.search_category, name='search_category'),
      
 #                           -------------------- Product -----------------------
 
@@ -29,11 +30,13 @@ urlpatterns = [
      path('add_product/' , views.add_product, name='add_product'),
      path('<int:id>/edit_product/', views.edit_product, name='edit_product'),
      path('delete_product/<int:id>', views.delete_product, name='delete_product'),
+     path('search_product_admin/', views.search_product_admin, name='search_product_admin'),
      
 #                           -------------------- Comment -----------------------
 
      path('comment_list/', views.comment_list, name='comment_list'),
      path('<int:comment_id>/delete_comment', views.delete_comment, name='delete_comment'),
+     path('search_comment/', views.search_comment, name='search_comment'),
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
      
