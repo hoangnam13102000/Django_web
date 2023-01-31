@@ -6,7 +6,7 @@ urlpatterns = [
 #                           -------------------- Product -----------------------
 
      path('search_products/', views.search_products, name='search_products'),
-     path('<int:id>/product_detail/', views.product_view, name='product_detail'),
+     path('<int:product_id>/product_detail/', views.product_detail, name='product_detail'),
 
 #                  -------------------- Create Menu Base on Category -----------------------  
 
@@ -20,16 +20,16 @@ urlpatterns = [
 
      path('categories/', views.category_list, name='category_list'),
      path('addCategory/' , views.addCategory, name='addCategory'),
-     path('<int:id>/edit_category/', views.edit_category, name='edit_category'),
-     path('delete/<int:id>', views.delete_category, name='delete_category'),
+     path('<int:category_id>/edit_category/', views.edit_category, name='edit_category'),
+     path('delete/<int:category_id>', views.delete_category, name='delete_category'),
      path('search_category/', views.search_category, name='search_category'),
      
 #                           -------------------- Product -----------------------
 
      path('products/', views.product_list, name='product_list'),
      path('add_product/' , views.add_product, name='add_product'),
-     path('<int:id>/edit_product/', views.edit_product, name='edit_product'),
-     path('delete_product/<int:id>', views.delete_product, name='delete_product'),
+     path('<int:product_id>/edit_product/', views.edit_product, name='edit_product'),
+     path('delete_product/<int:product_id>', views.delete_product, name='delete_product'),
      path('search_product_admin/', views.search_product_admin, name='search_product_admin'),
      
 #                           -------------------- Comment -----------------------

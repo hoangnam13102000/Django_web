@@ -18,7 +18,7 @@ class Customer(models.Model):
     
 # Table Employee
 class Employee(models.Model):
-    #user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image=models.ImageField(upload_to='images/employees',null=False, default=None)
     fullname=models.CharField(max_length=100,null=True)
     username=models.CharField(max_length=50,null=True)
     email = models.EmailField(max_length=20,default="unknow@gmail.com")

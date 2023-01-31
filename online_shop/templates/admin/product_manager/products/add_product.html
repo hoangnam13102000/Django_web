@@ -38,7 +38,7 @@
                             <div class="card-title"><center><b>Thêm sản phẩm </b></center></div>
                         </div>
                         <div class="card-body">
-                            <form action="{{'.'}}"  method="POST" >
+                            <form action="{{'.'}}"  method="POST" enctype="multipart/form-data">  {% comment %} 'enctype="multipart/form-data' Required when uploading files {% endcomment %}
                                 {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6 col-lg-6">

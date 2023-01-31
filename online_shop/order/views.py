@@ -50,7 +50,14 @@ def cart(request):
             cart_items.append(item)
     form = OrderForm()
     categories=Category.objects.all()
-    return render(request, 'home/view_cart.html', {'cart_items': cart_items, 'total': total, 'form':form,'categories':categories})
+    
+    context={
+        'cart_items': cart_items,
+        'total': total,
+        'form':form,
+        'categories':categories
+    }
+    return render(request, 'home/view_cart.html', context)
 
 
 # Clear Cart
@@ -75,7 +82,9 @@ def remove_from_cart(request, product_id):
 
 # Check out the product
 def checkout(request):
+    # show navbar in home page
     categories=Category.objects.all() 
+    
     if request.user.is_authenticated:
         if request.method == 'POST':
             form = OrderForm(request.POST)
@@ -104,7 +113,12 @@ def checkout(request):
     else:
         messages.error(request,'Bạn phải đăng nhập trước khi thanh toán')
         form = OrderForm()
-    return render(request, 'home/view_cart.html', {'form':form,'categories':categories})
+    
+    context={
+        'form':form,
+        'categories':categories
+    }
+    return render(request, 'home/view_cart.html', context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -112,14 +126,24 @@ def checkout(request):
 
 # Show Order list
 def order_list(request):
+    #show admin web user information
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee  =Employee.objects.filter(username=user.username).first()
+    
     search_form= SearchOrderForm()
+    
+    # view order list and pagination
     order = Order.objects.all()
     paginator = Paginator(order, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/orders_manager/order_list.html', {'page_obj':page_obj,'employee':employee,'search_form':search_form})
+    
+    context={
+        'profie_employee':profie_employee ,
+        'page_obj':page_obj,
+        'search_form':search_form
+    }
+    return render(request, 'admin/orders_manager/order_list.html',context)
 
 # Delete order 
 def delete_order(request,order_id):
@@ -130,6 +154,10 @@ def delete_order(request,order_id):
 
 # Search Order
 def search_order(request):
+    #show admin web user information
+    user=request.user
+    profie_employee  =Employee.objects.filter(username=user.username).first()
+    
     search_type=request.GET.get('search_type')
     keyword = request.GET.get('keyword')
     search_form= SearchOrderForm()
@@ -139,7 +167,13 @@ def search_order(request):
         data = Order.objects.filter(phone_number__icontains=keyword).order_by('-id')
     else:
         data = Order.objects.filter(customer_name__icontains=keyword).order_by('-id')
-    return render(request, 'admin/orders_manager/search_order.html', {'data':data ,'search_form':search_form})
+    
+    context={
+        'profie_employee':profie_employee ,
+        'data':data,
+        'search_form':search_form
+    }
+    return render(request, 'admin/orders_manager/search_order.html', context)
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

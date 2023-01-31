@@ -9,7 +9,7 @@ class ContactForm(forms.ModelForm):
         widgets = {
             'customer_name': forms.TextInput(attrs={'class': 'form-control','placeholder':'Nhập tên','required':''}),
             'customer_email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email','required':''}),
-            'content': forms.TextInput(attrs={'class': 'form-control','placeholder':'Đừng ngại hỏi về đơn hàng của bạn','required':''}),
+            'content': forms.Textarea(attrs={'class': 'form-control','placeholder':'Đừng ngại hỏi về đơn hàng của bạn','required':''}),
         }
 
 # Search Contact Form

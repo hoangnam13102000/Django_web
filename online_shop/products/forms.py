@@ -7,13 +7,14 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['image', 'title', 'category', 'price', 'description','is_active','brand']
+        choices_status=(('True','Hoạt động'),('False','Khóa'))
         widgets = {
             'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Tên sản phẩm'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
             'price': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Gía sản phẩm'}),
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Mô tả sản phẩm'}),
-            'is_active': forms.CheckboxInput(attrs={'class': 'form-control'}),
+            'is_active': forms.Select(choices=choices_status,attrs={'class': 'form-control'}),
             'brand': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Hãng'}),
         }
 

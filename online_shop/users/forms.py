@@ -75,7 +75,7 @@ class CustomerForm(forms.ModelForm):
         model=Customer
         fields= ["fullname","gender","address","phone", "email","username","password","is_active"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
-        choices_status=(('True','Hoạt động'),('False','Không hoạt động'))
+        choices_status=(('True','Hoạt động'),('False','Khóa'))
         widgets={
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
@@ -99,10 +99,11 @@ class AddEmployeeForm(forms.ModelForm):
     password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu','required':''}))
     class Meta:
         model=Employee
-        fields= ["fullname","gender","address","phone", "email","username","password","salary","position"]
+        fields= ["image","fullname","gender","address","phone", "email","username","password","salary","position"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
         choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
         widgets={
+            'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Tên nhân viên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
             'phone': forms.TextInput(attrs={'class':'form-control','placeholder':'Số điện thoại'}),
@@ -118,11 +119,12 @@ class AddEmployeeForm(forms.ModelForm):
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model=Employee
-        fields= ["fullname","gender","address","phone", "email","username","password","salary","position","is_active"]
+        fields= ["image","fullname","gender","address","phone", "email","username","password","salary","position","is_active"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
         choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
-        choices_status=(('True','Hoạt động'),('False','Không hoạt động'))
+        choices_status=(('True','Hoạt động'),('False','Khóa'))
         widgets={
+            'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
             'phone': forms.TextInput(attrs={'class':'form-control'}),
@@ -139,9 +141,10 @@ class EmployeeForm(forms.ModelForm):
 class ProfileEmployeeForm(forms.ModelForm):
     class Meta:
         model=Employee
-        fields= ["fullname","gender","address","phone", "email","username","password","salary","position"]
+        fields= ["image","fullname","gender","address","phone", "email","username","password","salary","position"]
         choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
         widgets={
+            'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
             'phone': forms.TextInput(attrs={'class':'form-control'}),

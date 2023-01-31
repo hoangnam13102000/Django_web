@@ -15,18 +15,18 @@ urlpatterns = [
 #                           -------------------- Customer -----------------------
      path('customer_list/' , views.customer_list, name='customer_list'),
      path('add_user/' , views.add_user, name='add_user'),
-     path('<int:id>/edit_customer_admin/' , views.edit_customer_admin, name='edit_customer_admin'),
-     path('<int:id>/delete_customer/' , views.delete_customer, name='delete_customer'),
+     path('<int:customer_id>/edit_customer_admin/' , views.edit_customer_admin, name='edit_customer_admin'),
+     path('<int:customer_id>/delete_customer/' , views.delete_customer, name='delete_customer'),
      path('search_customer/' , views.search_customer, name='search_customer'),
 
 #                           -------------------- Employee -----------------------
 
      path('employee_list/' , views.employee_list, name='employee_list'),
      path('add_employee/' , views.add_employee, name='add_employee'),
-     path('<int:id>/edit_employee/' , views.edit_employee, name='edit_employee'),
-     path('<int:id>/delete_employee/' , views.delete_employee, name='delete_employee'),
+     path('<int:employee_id>/edit_employee/' , views.edit_employee, name='edit_employee'),
+     path('<int:employee_id>/delete_employee/' , views.delete_employee, name='delete_employee'),
      path('search_employee/' , views.search_employee, name='search_employee'),
-     path('<int:id>/profile_employee/' , views.profile_employee, name='profile_employee'),
+     path('<int:employee_id>/profile_employee/' , views.profile_employee, name='profile_employee'),
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 ]

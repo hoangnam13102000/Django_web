@@ -1,14 +1,14 @@
 from django.shortcuts import render,redirect, get_object_or_404 # calls the given model and get object from that if that object or model doesn’t exist it raise 404 error.
 from .forms import CustomerForm,Customer_info_Form,Change_Password_Form
-from django.contrib.auth.models import User
 from django.contrib import messages
 from .models import Customer, Employee
+from .forms import AddCustomerForm,AddEmployeeForm,EmployeeForm,ProfileEmployeeForm,SearchEmployeeForm,SearchCustomerForm
+from . utils import handle_upload_file
+from .serializers import CustomerSerializer #,CustomerCreationSerializer
 from products.models import Category
 from django.core.paginator import Paginator
-from .forms import AddCustomerForm,AddEmployeeForm,EmployeeForm,ProfileEmployeeForm,SearchEmployeeForm,SearchCustomerForm
+from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate
-from .serializers import CustomerSerializer #,CustomerCreationSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,8 +18,10 @@ from rest_framework import status
 
 # edit customer
 def edit_info(request,id):
-    user = get_object_or_404(User, id=id)
+    # show navbar in home page
     categories=Category.objects.all()
+    
+    user = get_object_or_404(User, id=id)
     customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
     if(request.method=="POST"):
         form =Customer_info_Form(request.POST,instance=customer)
@@ -30,14 +32,22 @@ def edit_info(request,id):
         # print(form.errors) #print error of form
     else:
         form = CustomerForm(instance=customer)
-    return render(request, 'home/edit_info.html', {'form':form,'categories':categories})
+
+    context={
+        'form':form,
+        'categories':categories
+    }
+    return render(request, 'home/edit_info.html', context)
 
 # Change password
 def change_password(request, id):
+    # show navbar in home page
     categories=Category.objects.all()
+    
     user = get_object_or_404(User, id=id)
     customer=Customer.objects.filter(username=user.username).first()
     form =Change_Password_Form(request.POST)
+    
     if form.is_valid():
         new_password=request.POST['password']
         old_password=request.POST['old_password']
@@ -62,7 +72,12 @@ def change_password(request, id):
             messages.error(request,'Sai mật khẩu!')
             return redirect('change_password', id=user.id)
     form =Change_Password_Form()
-    return render(request, 'home/change_password.html', {'form':form,'categories':categories})
+    
+    context={
+        'form':form,
+        'categories':categories
+    }
+    return render(request, 'home/change_password.html',context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -72,20 +87,32 @@ def change_password(request, id):
 
 # Show Customer list
 def customer_list(request):
-    search_form= SearchCustomerForm()
+    #show admin web user information
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee  =Employee.objects.filter(username=user.username).first()
+    
+    search_form= SearchCustomerForm()
+    
+    # All customer in list and pagination
     customer = Customer.objects.all()
     paginator = Paginator(customer, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/user_manager/customers/customer_list.html', {'page_obj':page_obj,'employee':employee,'search_form':search_form })
+    
+    context={
+        'page_obj':page_obj,
+        'profie_employee':profie_employee ,
+        'search_form':search_form
+    }
+    return render(request, 'admin/user_manager/customers/customer_list.html', context)
 
 # add info customer
 def add_user(request):
-    form=AddCustomerForm()
+    #show admin web user information
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee =Employee.objects.filter(username=user.username).first()
+    
+    form=AddCustomerForm()
     if(request.method=="POST"):
         form=AddCustomerForm(request.POST)
         username=request.POST['username']
@@ -96,6 +123,7 @@ def add_user(request):
         phone=request.POST['phone']
         address=request.POST['address']
         gender=request.POST['gender']
+        
         if(User.objects.filter(username=username)):
             messages.error(request,'Tên đăng nhập đã tồn tại!')
             return redirect('add_user')
@@ -114,16 +142,23 @@ def add_user(request):
             return redirect('customer_list')
     else:
         form=AddCustomerForm()
-    return render(request,'admin/user_manager/customers/add_customer.html',{'form':form,'employee':employee})
+    
+    context={
+        'form':form,
+        'profie_employee':profie_employee
+    }
+    return render(request,'admin/user_manager/customers/add_customer.html',context)
 
 # Edit customer
-def edit_customer_admin(request,id):
+def edit_customer_admin(request,customer_id):
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee =Employee.objects.filter(username=user.username).first()
+    
     categories=Category.objects.all()
-    customer = get_object_or_404(Customer, id=id)
+    customer = get_object_or_404(Customer, id=customer_id)
     user=User.objects.filter(username=customer.username).first()
     form =CustomerForm(request.POST or None,instance=customer)
+    
     if request.method == 'POST':
         new_password = request.POST.get('password')
         is_active=request.POST.get('is_active')
@@ -137,11 +172,18 @@ def edit_customer_admin(request,id):
             return redirect("customer_list")
     else:
         form = CustomerForm(instance=customer)
-    return render(request, 'admin/user_manager/customers/edit_customer.html', {'form':form,'categories':categories,'employee':employee,'customer':customer})
+
+    context={
+        'form':form,
+        'categories':categories,
+        'profie_employee':profie_employee,
+        'customer':customer
+    }
+    return render(request, 'admin/user_manager/customers/edit_customer.html', context)
 
 # Delete customer 
-def delete_customer(request,id):
-    customer=Customer.objects.get(id=id)
+def delete_customer(request,customer_id):
+    customer=Customer.objects.get(id=customer_id)
     account=User.objects.filter(username=customer.username)
     account.delete()
     customer.delete()
@@ -150,9 +192,14 @@ def delete_customer(request,id):
 
 # Search customer
 def search_customer(request):
+    #show admin web user information
+    user=request.user
+    profie_employee =Employee.objects.filter(username=user.username).first()
+    
     search_type=request.GET.get('search_type')
     keyword = request.GET.get('keyword')
     search_form= SearchCustomerForm()
+    
     if search_type == "email":
         data = Customer.objects.filter(email__icontains=keyword).order_by('-id')
     elif search_type == "username":
@@ -163,28 +210,45 @@ def search_customer(request):
         data = Customer.objects.filter(address__icontains=keyword).order_by('-id')
     else:
         data = Customer.objects.filter(fullname__icontains=keyword).order_by('-id')
-    return render(request, 'admin/user_manager/customers/search_customer.html', {'data':data ,'search_form':search_form})
+
+    context={
+        'profie_employee':profie_employee,
+        'data':data,
+        'search_form':search_form
+    }
+    return render(request, 'admin/user_manager/customers/search_customer.html',context)
 
 #                           -------------------- Employee -----------------------
 
 # Show Employee list
 def employee_list(request):
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee=Employee.objects.filter(username=user.username).first()
     search_form= SearchEmployeeForm()
+    
+    # All employee in list and pagination
     employees = Employee.objects.all()
     paginator = Paginator(employees , 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/user_manager/employees/employee_list.html', {'page_obj':page_obj,'employee':employee,'search_form':search_form})
+    
+    context={
+        'page_obj':page_obj,
+        'profie_employee':profie_employee,
+        'search_form':search_form
+    }
+    return render(request, 'admin/user_manager/employees/employee_list.html', context)
 
 # add Employee
 def add_employee(request):
+    #show admin web user information
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee =Employee.objects.filter(username=user.username).first()
+    
     form=AddEmployeeForm()
     if(request.method=="POST"):
-        form=AddEmployeeForm(request.POST)
+        form=AddEmployeeForm(request.POST, request.FILES)
+        image=request.FILES['image']
         username=request.POST['username']
         email=request.POST['email']
         password=request.POST['password']
@@ -195,6 +259,7 @@ def add_employee(request):
         gender=request.POST['gender']
         position=request.POST['position']
         salary=request.POST['salary']
+        
         if(User.objects.filter(username=username)):
             messages.error(request,'Tên đăng nhập đã tồn tại!')
             return redirect('add_employee')
@@ -205,32 +270,46 @@ def add_employee(request):
              messages.error(request,'Mật khẩu không trùng nhau!')
              return redirect('add_employee')
         if(form.is_valid()):
+            handle_upload_file(image)
             user=User.objects.create_user(username,email,password )
+
             user.is_staff = True
             user.is_superuser = True if position == 'Quản lý' else False
             user.save()
-            account=Employee(username=username,email=email,password=password,fullname=fullname
+            # form.save()
+            account=Employee(image=image,username=username,email=email,password=password,fullname=fullname
                              ,phone=phone,address=address,gender=gender,position=position,salary=salary)
-            account.save()
+            
             # customer=Customer(fullname=fullname,phone=phone,username=username,
             #                  email=email,password=password,address=address,gender=gender)
             # customer.save()
+            account.save()
             messages.success(request,'Tạo nhân viên thành công')
             return redirect('employee_list')
     else:
         form=AddEmployeeForm()
-    return render(request,'admin/user_manager/employees/add_employee.html',{'form':form,'employee':employee})
+    
+    context={
+        'form':form,
+        'profie_employee':profie_employee,
+    }
+    return render(request,'admin/user_manager/employees/add_employee.html',context)
 
 # Edit employee
-def edit_employee(request,id):
-    employee = get_object_or_404(Employee, id=id)
+def edit_employee(request,employee_id):
+    #show admin web user information
+    user=request.user
+    profie_employee =Employee.objects.filter(username=user.username).first()
+    
+    employee = get_object_or_404(Employee, id=employee_id)
     user=User.objects.filter(username=employee.username).first()
-    form = EmployeeForm(request.POST or None, instance=employee)
+    form = EmployeeForm(request.POST, request.FILES, instance=employee)
     if request.method == 'POST':
         new_password = request.POST.get('password')
         position=request.POST.get('position')
         is_active=request.POST.get('is_active')
         if form.is_valid():
+            handle_upload_file(request.FILES['image'])
             form.save()
             user.is_superuser = True if position == 'Quản lý' else False
             password=make_password(new_password,hasher='default')
@@ -238,15 +317,21 @@ def edit_employee(request,id):
             user.is_active=is_active
             user.save()
             messages.success(request,'Đã cập nhập nhân viên thành công')
-            return redirect('edit_employee', id=employee.id)
+            return redirect('employee_list')
 
     else:
         form = EmployeeForm(instance=employee)
-    return render(request, 'admin/user_manager/employees/edit_employee.html', {'form':form,'employee':employee})
+    
+    context={
+        'employee':employee,
+        'form':form,
+        'profie_employee':profie_employee
+    }
+    return render(request, 'admin/user_manager/employees/edit_employee.html', context)
 
 # Delete employee 
-def delete_employee(request,id):
-    employee=Employee.objects.get(id=id)
+def delete_employee(request,employee_id):
+    employee=Employee.objects.get(id=employee_id)
     account=User.objects.filter(username=employee.username)
     account.delete()
     employee.delete()
@@ -255,6 +340,10 @@ def delete_employee(request,id):
 
 # Search Employee
 def search_employee(request):
+    #show admin web user information
+    user=request.user
+    profie_employee =Employee.objects.filter(username=user.username).first()
+    
     search_type=request.GET.get('search_type')
     keyword = request.GET.get('keyword')
     search_form= SearchEmployeeForm()
@@ -268,12 +357,23 @@ def search_employee(request):
         data = Employee.objects.filter(address__icontains=keyword).order_by('-id')
     else:
         data = Employee.objects.filter(fullname__icontains=keyword).order_by('-id')
-    return render(request, 'admin/user_manager/employees/search_employee.html', {'data':data ,'search_form':search_form})
+
+    context={
+        'profie_employee':profie_employee,
+        'data':data,
+        'search_form':search_form
+    }
+    return render(request, 'admin/user_manager/employees/search_employee.html',context)
 
 # View & Edit Profile employee
-def profile_employee(request,id):
-    employee = get_object_or_404(Employee, id=id)
+def profile_employee(request,employee_id):
+    #show admin web user information
+    user_admin=request.user
+    profie_employee =Employee.objects.filter(username=user_admin.username).first()
+    
+    employee = get_object_or_404(Employee, id=employee_id)
     user=User.objects.filter(username=employee.username).first()
+    
     form = ProfileEmployeeForm(request.POST or None, instance=employee)
     if request.method == 'POST':
         new_password = request.POST.get('password')
@@ -286,7 +386,13 @@ def profile_employee(request,id):
             return redirect('home')
     else:
         form = ProfileEmployeeForm(instance=employee)
-    return render(request, 'admin/user_manager/employees/profile_employee/profile_employee.html', {'form':form,'employee':employee})
+
+    context={
+        'profie_employee':profie_employee,
+        'form':form,
+        'employee':employee, 
+    }
+    return render(request, 'admin/user_manager/employees/profile_employee/profile_employee.html', context)
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

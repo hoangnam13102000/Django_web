@@ -20,21 +20,30 @@ from rest_framework import status
 
 # Home page
 def index(request):
-    products = Product.objects.all()
+    # # show navbar in home page
     categories=Category.objects.all()
+    
+    # view featured product and pagination page
+    products = Product.objects.all()
     paginator = Paginator( products, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # view best selling product and pagination page
     category = get_object_or_404(Category, pk=1)
-    product_best_seller = Product.objects.filter(category=category).all()
-    paginator1 = Paginator(product_best_seller, 3)
+    product_best_selling = Product.objects.filter(category=category).all()
+    paginator1 = Paginator(product_best_selling, 3)
     page_number1 = request.GET.get('page')
     page_obj1 = paginator1.get_page(page_number1)
+    
+    # view favorite product and pagination page 
     category1 = get_object_or_404(Category, pk=2)
-    product_best_seller2 = Product.objects.filter(category=category1).all()
-    paginator2 = Paginator(product_best_seller2, 2)
+    product_favorite_product = Product.objects.filter(category=category1).all()
+    paginator2 = Paginator(product_favorite_product, 2)
     page_number2 = request.GET.get('page')
     page_obj2 = paginator2.get_page(page_number2)
+    
+    # view cart
     cart_items = []
     total = 0
     if 'cart' in request.session:
@@ -43,11 +52,21 @@ def index(request):
             item['total_price'] = item['price'] * item['quantity']
             total += item['total_price']
             cart_items.append(item)
-    return render(request,'home/index.html',{'page_obj': page_obj,'categories':categories,'page_obj1': page_obj1,'page_obj2': page_obj2,'cart_items': cart_items})
+
+    context={
+        'page_obj': page_obj,
+        'categories':categories,
+        'page_obj1': page_obj1,
+        'page_obj2': page_obj2,
+        'cart_items': cart_items
+    }
+    return render(request,'home/index.html',context)
 
 # Login page
 def login(request):
+    # show navbar in home page
     categories=Category.objects.all()
+    
     acount=forms.LoginForm()
     if(request.method=="POST"):
         username=request.POST['username']
@@ -56,12 +75,10 @@ def login(request):
         if(user is not None):
             get_user= get_user_model()
             role=get_user.objects.get(username= username)
-            #employee=Employee.objects.filter(username=role.username).first()
-            if(role.is_staff == True):# or employee.position =='staff' or employee.position=='admin'  ):
+            if(role.is_staff == True):
                 messages.success(request,'Đăng nhập trang Admin thành công')
                 auth_login(request,user)
                 return redirect('admin')
-                
             else:
                 auth_login(request,user)
                 messages.success(request,'Đăng nhập thành công')
@@ -70,7 +87,12 @@ def login(request):
             messages.error(request,'Tài khoản hoặc mật khẩu không đúng!')
             return redirect('login')
     acount=forms.LoginForm()
-    return render(request,'home/login.html', {'form':acount,'categories':categories})
+    
+    context={
+        'categories':categories,
+        'form':acount
+    }
+    return render(request,'home/login.html', context)
 
 # Register page
 def register(request):
@@ -97,9 +119,15 @@ def register(request):
             messages.success(request,'Đăng ký tài khoản thành công')
             return redirect('login')
     else:
+        # show navbar in home page
         categories=Category.objects.all()
         form=forms.RegisterForm()
-    return render(request,'home/register.html',{'form':form,'categories':categories})
+    
+    context={
+        'categories':categories,
+        'form':form
+    }
+    return render(request,'home/register.html',context)
 
 # Logout
 def logout(request):
@@ -109,7 +137,9 @@ def logout(request):
 
 # Contact page
 def contact(request):
+    # show navbar in home page
     categories=Category.objects.all()
+    
     if request.method == 'POST':
         if request.user.is_authenticated:
             form = ContactForm(request.POST)
@@ -125,7 +155,12 @@ def contact(request):
             messages.error(request,'Bạn cần đăng nhập để liên hệ với chúng tôi!')
             return redirect('login')
     form = ContactForm()
-    return render(request,'home/contact.html',{'categories':categories,'form':form})
+    
+    context={
+        'categories':categories,
+        'form':form
+    }
+    return render(request,'home/contact.html',context)
 
 
 # ERROR NOT FOUND PAGE
@@ -140,36 +175,60 @@ def contact(request):
 
 # ------------------------------------------ Begin Admin Page ----------------------------------------------------
 
-# Admin page
-# @login_required(login_url='login')
 def index_admin(request):
-    cusromers = Customer.objects.all()
+    #show admin web user information
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee  =Employee.objects.filter(username=user.username).first()
+    
+    # view customer list and pagination
+    cusromers = Customer.objects.all()
     paginator = Paginator(cusromers, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # view product list and pagination
     products = Product.objects.all()
     paginator1 = Paginator(products, 5)
     page_number1 = request.GET.get('page')
     page_obj1 = paginator1.get_page(page_number1)
-    return render(request,'admin/index.html',{'page_obj': page_obj,'page_obj1': page_obj1,'employee':employee})
+    
+    context={
+        'page_obj': page_obj,
+        'page_obj1': page_obj1,
+        'profie_employee':profie_employee 
+    }
+    return render(request,'admin/index.html',context)
 
 
 # Show list Contact 
 def contact_list(request):
+    #show admin web user information
     user=request.user
-    employee =Employee.objects.filter(username=user.username).first()
+    profie_employee  =Employee.objects.filter(username=user.username).first()
+    
+    # search form in contact list
     search_form= SearchContactForm()
+    
+    # view contacts list and pagination
     contacts = Contact.objects.all()
     paginator = Paginator(contacts, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return render(request, 'admin/contact_manager/contact_list.html', {'page_obj': page_obj,'employee':employee,'search_form':search_form})
+    
+    context={
+        'page_obj': page_obj,
+        'profie_employee':profie_employee ,
+        'search_form':search_form
+    }
+    return render(request, 'admin/contact_manager/contact_list.html', context)
 
 
 # Search Contact
 def search_contact(request):
+    #show admin web user information
+    user=request.user
+    profie_employee  =Employee.objects.filter(username=user.username).first()
+    
     search_type=request.GET.get('search_type')
     keyword = request.GET.get('keyword')
     search_form= SearchContactForm()
@@ -177,7 +236,13 @@ def search_contact(request):
         data = Contact.objects.filter(customer_email__icontains=keyword).order_by('-id')
     else:
         data = Contact.objects.filter(customer_name__icontains=keyword).order_by('-id')
-    return render(request, 'admin/contact_manager/search_contact.html', {'data':data ,'search_form':search_form})
+
+    context={
+        'profie_employee':profie_employee ,
+        'data':data,
+        'search_form':search_form
+    }
+    return render(request, 'admin/contact_manager/search_contact.html', context)
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

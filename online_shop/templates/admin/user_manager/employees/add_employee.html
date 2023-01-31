@@ -38,10 +38,19 @@
                             <div class="card-title"><center><b> Thêm nhân viên </b></center></div>
                         </div>
                         <div class="card-body">
-                            <form action="{{'.'}}"  method="POST" >
+                            <form action="{{'.'}}"  method="POST" enctype="multipart/form-data">  {% comment %} 'enctype="multipart/form-data' Required when uploading files {% endcomment %}
                                 {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label for="image">Ảnh nhân viên</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-image"></i></span>
+                                            </div>
+                                            {{ form.image}} 
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <label for="email">Email</label>
                                         <div class="input-group mb-3">
