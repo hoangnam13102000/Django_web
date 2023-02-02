@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from users import forms
 from .models import Contact
-from .forms import ContactForm,SearchContactForm
+from .forms import ContactForm,SearchContactForm, LoginForm, RegisterForm
 from users.models import Customer,Employee
 from products.forms import Product, Category
 from django.contrib.auth.models import User
@@ -24,21 +23,19 @@ def index(request):
     categories=Category.objects.all()
     
     # view featured product and pagination page
-    products = Product.objects.all()
-    paginator = Paginator( products, 5)
+    product_featured = Product.objects.filter(featured='Featured',is_active=True).all()
+    paginator = Paginator( product_featured, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
     # view best selling product and pagination page
-    category = get_object_or_404(Category, pk=1)
-    product_best_selling = Product.objects.filter(category=category).all()
+    product_best_selling = Product.objects.filter(featured='Best_selling',is_active=True).all()
     paginator1 = Paginator(product_best_selling, 3)
     page_number1 = request.GET.get('page')
     page_obj1 = paginator1.get_page(page_number1)
     
     # view favorite product and pagination page 
-    category1 = get_object_or_404(Category, pk=2)
-    product_favorite_product = Product.objects.filter(category=category1).all()
+    product_favorite_product = Product.objects.filter(featured='Favorite',is_active=True).all()
     paginator2 = Paginator(product_favorite_product, 2)
     page_number2 = request.GET.get('page')
     page_obj2 = paginator2.get_page(page_number2)
@@ -64,18 +61,15 @@ def index(request):
 
 # Login page
 def login(request):
-    # show navbar in home page
-    categories=Category.objects.all()
     
-    acount=forms.LoginForm()
     if(request.method=="POST"):
         username=request.POST['username']
         password=request.POST['password']
-        user =authenticate(request, username=username,password=password )
-        if(user is not None):
+        account =authenticate(request, username=username,password=password )
+        if(account is not None):
             get_user= get_user_model()
-            role=get_user.objects.get(username= username)
-            if(role.is_staff == True):
+            user=get_user.objects.get(username= username)
+            if(user.is_staff == True):
                 messages.success(request,'Đăng nhập trang Admin thành công')
                 auth_login(request,user)
                 return redirect('admin')
@@ -86,7 +80,10 @@ def login(request):
         else:
             messages.error(request,'Tài khoản hoặc mật khẩu không đúng!')
             return redirect('login')
-    acount=forms.LoginForm()
+    else:
+         # show navbar in home page
+        categories=Category.objects.all()
+        acount=LoginForm()
     
     context={
         'categories':categories,
@@ -96,9 +93,9 @@ def login(request):
 
 # Register page
 def register(request):
-    form=forms.RegisterForm()
+    
     if(request.method=="POST"):
-        form=forms.RegisterForm(request.POST)
+        form=RegisterForm(request.POST)
         username=request.POST['username']
         email=request.POST['email']
         password=request.POST['password']
@@ -121,7 +118,7 @@ def register(request):
     else:
         # show navbar in home page
         categories=Category.objects.all()
-        form=forms.RegisterForm()
+        form=RegisterForm()
     
     context={
         'categories':categories,
@@ -137,8 +134,6 @@ def logout(request):
 
 # Contact page
 def contact(request):
-    # show navbar in home page
-    categories=Category.objects.all()
     
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -154,7 +149,10 @@ def contact(request):
         else:
             messages.error(request,'Bạn cần đăng nhập để liên hệ với chúng tôi!')
             return redirect('login')
-    form = ContactForm()
+    else:
+        # show navbar in home page
+        categories=Category.objects.all()
+        form = ContactForm()
     
     context={
         'categories':categories,

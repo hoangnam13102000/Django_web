@@ -5,8 +5,9 @@ urlpatterns = [
 # ------------------------------------------ Begin Home Page -------------------------------------------------
 
 #                           -------------------- Customer -----------------------
-     path('<int:id>/edit_info/' , views.edit_info, name='edit_info'),
-     path('<int:id>/change_password/' , views.change_password, name='change_password'),
+     path('<int:user_id>/profile_customer/' , views.profile_customer, name='profile_customer'),
+     path('<int:user_id>/edit_profile_customer/' , views.edit_profile_customer, name='edit_profile_customer'),
+     path('<int:user_id>/change_password/' , views.change_password, name='change_password'),
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -26,7 +27,8 @@ urlpatterns = [
      path('<int:employee_id>/edit_employee/' , views.edit_employee, name='edit_employee'),
      path('<int:employee_id>/delete_employee/' , views.delete_employee, name='delete_employee'),
      path('search_employee/' , views.search_employee, name='search_employee'),
-     path('<int:employee_id>/profile_employee/' , views.profile_employee, name='profile_employee'),
+     path('<int:user_id>/profile_employee/' , views.profile_employee, name='profile_employee'),
+     path('<int:user_id>/edit_profile_employee/' , views.edit_profile_employee, name='edit_profile_employee'),
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 ]

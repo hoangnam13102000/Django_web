@@ -1,34 +1,23 @@
-{% extends 'admin/base.html' %} 
+{% extends 'home/base.html' %}
 {% load static %} 
 {% block main %}
-<div class="main-panel">
-    <div class="content">
-        <div class="page-inner">
-            <div class="page-header">
-                <ul class="breadcrumbs">
-                    <li class="nav-home">
-                        <a href="{% url 'admin' %}">
-                            <i class="flaticon-home"></i>
-                        </a>
-                    </li>
-                    <li class="separator">
-                        <i class="flaticon-right-arrow"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{'.'}}">Hồ sơ của tôi </a>
-                    </li>
-                </ul>
-            </div>
+<div id="wrapper">
+    <div class="container justify-content-around">
+      <ul class="breadcrumb">
+        <li><a href="{% url 'home' %}">Trang chủ</a></li>
+        <li><a href="{% url 'profile_customer' user.id %}">Hồ sơ {{request.user}}</a></li>
+    </ul>
+        <div class="row">
           <div class="row gutters-sm">
             <div class="col-md-4 mb-3">
               <div class="card">
                 <div class="card-body">
                   <div class="d-flex flex-column align-items-center text-center">
-                    <img src="{% if  employee.image %} {{employee.image.url}} {% else %} {% static 'assets/img/404/no_image.png' %} {% endif %}" alt="Admin" class="rounded-circle" width="150">
+                    <img src=" {% if  customer.image %} {{customer.image.url}} {% else %} {% static 'assets/img/404/no_image.png' %} {% endif %} " alt="img" class="rounded-circle" width="150">
                     <div class="mt-3">
-                      <h4>{{ employee.fullname }}</h4>
-                      <p class="text-secondary mb-1">{% if employee.position  == 'Admin' %} Quản lý {% else %} Nhân viên {% endif %}</p>
-                      <p class="text-muted font-size-sm">{{ employee.address }}</p>
+                      <h4>{{ customer.fullname }}</h4>
+                      <p class="text-secondary mb-1">{% if  user.is_staff and user.is_superuser %} Quản lý {% elif user.is_staff  and not user.is_superuser  %} Nhân viên {% else %} Khách hàng {% endif %}</p>
+                      <p class="text-muted font-size-sm">{{ customer.address }}</p>
                     </div>
                   </div>
                 </div>
@@ -66,7 +55,7 @@
                       <h6 class="mb-0">Họ tên:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ employee.fullname }}
+                        {{ customer.fullname }}
                     </div>
                   </div>
                   <hr>
@@ -75,7 +64,7 @@
                       <h6 class="mb-0">Email:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ employee.email }}
+                        {{ customer.email }}
                     </div>
                   </div>
                   <hr>
@@ -84,7 +73,7 @@
                       <h6 class="mb-0">Username:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ employee.username }}
+                        {{ customer.username }}
                     </div>
                   </div>
                   <hr>
@@ -93,16 +82,7 @@
                       <h6 class="mb-0">Password:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ employee.password}}
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Chức vụ:</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                        {% if employee.position  == 'Admin' %} Quản lý {% else %} Nhân viên {% endif %}
+                        {{ customer.password}}
                     </div>
                   </div>
                   <hr>
@@ -111,7 +91,7 @@
                       <h6 class="mb-0">Số điện thoại:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ employee.phone }}
+                        {{ customer.phone }}
                     </div>
                   </div>
                   <hr>
@@ -120,31 +100,13 @@
                       <h6 class="mb-0">Địa chỉ:</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ employee.address }}
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Lương:</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                        {{ employee.salary }} VNĐ
-                    </div>
-                  </div>
-                  <hr>
-                  <div class="row">
-                    <div class="col-sm-3">
-                      <h6 class="mb-0">Trạng thái:</h6>
-                    </div>
-                    <div class="col-sm-9 text-secondary">
-                        {% if  employee.is_active == True %} Hoạt động {% else %} Khóa{% endif %}
+                        {{ customer.address }}
                     </div>
                   </div>
                   <hr>
                   <div class="row">
                     <div class="col-sm-12">
-                      <a class="btn btn-info" href="{% url 'edit_profile_employee' employee.id %}">Chỉnh sửa</a>
+                      <a class="btn btn-info" href="{% url 'edit_profile_customer' user.id %}">Chỉnh sửa</a>
                     </div>
                   </div>
                 </div>
@@ -154,10 +116,7 @@
 
             </div>
           </div>
-
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
+      </div>
+                
 {% endblock %}

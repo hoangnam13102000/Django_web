@@ -4,20 +4,6 @@ from .models import Customer,Employee
 
 # ------------------------------------------ Begin Home Page Forms ----------------------------------------------------
 
-#                           -------------------- Login/Register Form -----------------------
-
-# Login Form
-class LoginForm(forms.Form):
-    username=forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Tên đăng nhập'}))
-    password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu'}))
-    
-# Register Form
-class RegisterForm(forms.Form):
-    username=forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Tên đăng nhập'}))
-    password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu'}))
-    password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận mật khẩu'}))
-    email=forms.EmailField(max_length=50,widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}))
-    
 #                           -------------------- Customer Forms -----------------------
 
 # Edit info Customer Form 
@@ -25,7 +11,7 @@ class Customer_info_Form(forms.ModelForm):
     class Meta:
         model=Customer
         fields= ["fullname","gender","address","phone", "email","username"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
         widgets={
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
@@ -46,6 +32,37 @@ class Change_Password_Form(forms.ModelForm):
             'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu mới','required':''}),
         }
 
+#                           -------------------- Employee Forms  -----------------------
+
+# Edit info Employee at Home page 
+class Employee_info_Form(forms.ModelForm):
+    class Meta:
+        model=Employee
+        fields= ["image","fullname","gender","address","phone", "email","username"]
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
+        widgets={
+            'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
+            'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
+            'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
+            'phone': forms.TextInput(attrs={'class':'form-control','placeholder':'Số điện thoại'}),
+            'address': forms.TextInput(attrs={'class':'form-control','placeholder':'Địa chỉ'}),
+            'username':forms.TextInput(attrs={'class':'form-control','readonly':''}),
+            'email':forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}),
+        }
+
+# Change Password Employee Form at Home page
+class Change_Password_Employee_Form(forms.ModelForm):
+    old_password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu cũ'}))
+    password2=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Xác nhận khẩu'}))
+    class Meta:
+        model=Employee
+        fields= ["password"]
+        widgets={
+            'password':forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu mới','required':''}),
+        }
+
+
+
 # ------------------------------------------ End Home Page Forms ----------------------------------------------------
 
 # ------------------------------------------ Begin Admin Page Forms ----------------------------------------------------
@@ -58,7 +75,7 @@ class AddCustomerForm(forms.ModelForm):
     class Meta:
         model=Customer
         fields= ["fullname","gender","address","phone", "email","username","password"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
         widgets={
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
             'gender': forms.RadioSelect(choices=choices_gender,attrs={'class':'form-check'}),
@@ -74,7 +91,7 @@ class CustomerForm(forms.ModelForm):
     class Meta:
         model=Customer
         fields= ["fullname","gender","address","phone", "email","username","password","is_active"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
         choices_status=(('True','Hoạt động'),('False','Khóa'))
         widgets={
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),
@@ -100,8 +117,8 @@ class AddEmployeeForm(forms.ModelForm):
     class Meta:
         model=Employee
         fields= ["image","fullname","gender","address","phone", "email","username","password","salary","position"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
-        choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
+        choices_position=(('Staff','Nhân viên'),('Admin','Quản lý'))
         widgets={
             'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Tên nhân viên'}),
@@ -120,8 +137,8 @@ class EmployeeForm(forms.ModelForm):
     class Meta:
         model=Employee
         fields= ["image","fullname","gender","address","phone", "email","username","password","salary","position","is_active"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
-        choices_position=(('Nhân viên','Nhân viên'),('Quản lý','Quản lý'))
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
+        choices_position=(('Staff','Nhân viên'),('Admin','Quản lý'))
         choices_status=(('True','Hoạt động'),('False','Khóa'))
         widgets={
             'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
@@ -142,7 +159,7 @@ class ProfileEmployeeForm(forms.ModelForm):
     class Meta:
         model=Employee
         fields= ["image","fullname","gender","address","phone", "email","username","password","salary","position"]
-        choices_gender=(('Nam','Nam'),('Nữ','Nữ'))
+        choices_gender=(('Male','Nam'),('Female','Nữ'))
         widgets={
             'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'fullname':forms.TextInput(attrs={'class':'form-control','placeholder':'Họ và tên'}),

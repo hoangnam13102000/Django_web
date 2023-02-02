@@ -96,11 +96,11 @@
                         <td>{{ forloop.counter }}</td>
                         <td> <img src="{% if  employee.image %} {{employee.image.url}} {% else %} {% static 'assets/img/404/no_image.png' %} {% endif %}" alt="..." class="img" style="width: 100px; height: 100px;"></td>
                         <td>{{ employee.fullname }}</td>
-                        <td>{{ employee.gender }}</td>
+                        <td>{% if  employee.gender  == 'Male' %} Nam  {% elif  employee.gender  == 'Female' %} Nữ {% else %} None {% endif %}</td>
                         <td>{{ employee.email }}</td>
                         <td>{{ employee.phone }}</td>
                         <td>{{ employee.address }}</td>
-                        <td>{{ employee.position}}</td>
+                        <td>{% if employee.position  == 'Admin' %} Quản lý {% else %} Nhân viên {% endif %}</td>
                         <td>{{ employee.salary }}</td>
                         <td>{{ employee.username }}</td>
                         <td>{{ employee.password}}</td>

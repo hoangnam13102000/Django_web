@@ -18,9 +18,7 @@ from rest_framework import status
 
 # View Product detail in home page by id
 def product_detail(request, product_id):
-    # show navbar in home page
-    categories=Category.objects.all()
-    
+
     # comment product
     product = get_object_or_404(Product, pk=product_id)
     comments= product.comments.all()
@@ -34,7 +32,11 @@ def product_detail(request, product_id):
                 return redirect('product_detail', id)     
         else:
             messages.error(request,'Bạn cần đăng nhập để bình luận!')
-    form = CommentForm()
+    else:
+        # show navbar in home page
+        categories=Category.objects.all()
+        # Coment Product Form
+        form = CommentForm()
     
     context={
         'product': product,
@@ -106,11 +108,7 @@ def category_list(request):
 
 # Add Category
 def addCategory(request):
-    #show admin web user information
-    user=request.user
-    profie_employee =Employee.objects.filter(username=user.username).first()
     
-    form=CategoryForm()
     if request.method == 'POST':
         form = CategoryForm(request.POST)
         name=request.POST['name']
@@ -122,6 +120,10 @@ def addCategory(request):
             messages.success(request,'Thêm loại sản phẩm thành công')
             return redirect('category_list')
     else:
+        #show admin web user information
+        user=request.user
+        profie_employee =Employee.objects.filter(username=user.username).first()
+        # Add Category Form
         form = CategoryForm()
 
     context={
@@ -203,9 +205,6 @@ def product_list(request):
 
 # Add product into list
 def add_product(request):
-    #show admin web user information
-    user=request.user
-    profie_employee =Employee.objects.filter(username=user.username).first()
     
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -220,6 +219,9 @@ def add_product(request):
         else:
             messages.error(request,'Thêm sản phẩm thất bại')
     else:
+        #show admin web user information
+        user=request.user
+        profie_employee =Employee.objects.filter(username=user.username).first()
         form = ProductForm()
 
     context={
@@ -322,6 +324,7 @@ def search_comment(request):
     search_type=request.GET.get('search_type')
     keyword = request.GET.get('keyword')
     search_form= SearchCommentForm()
+    
     if search_type == "Email":
         data = Comment.objects.filter(commenter_email__icontains=keyword).order_by('-id')
     else:

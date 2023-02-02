@@ -15,19 +15,13 @@
                         <i class="flaticon-right-arrow"></i>
                     </li>
                     <li class="nav-item">
-                      <a data-toggle="collapse" href="#user_manager">Quản lý người dùng</a>
-                  </li>
+                        <a href="{% url 'profile_employee' employee.id %}">Hồ sơ của tôi </a>
+                    </li>
                     <li class="separator">
                         <i class="flaticon-right-arrow"></i>
                     </li>
                     <li class="nav-item">
-                      <a href="{% url 'employee_list' %}">Danh sách nhân viên</a>
-                  </li>
-                    <li class="separator">
-                      <i class="flaticon-right-arrow"></i>
-                  </li>
-                    <li class="nav-item">
-                        <a href="{{'.'}}">Thêm nhân viên</a>
+                        <a href="{{'.'}}">Cập nhập hồ sơ </a>
                     </li>
                 </ul>
             </div>
@@ -35,10 +29,10 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-title"><center><b> Thêm nhân viên </b></center></div>
+                            <div class="card-title"><center><b> Cập nhập hồ sơ {{employee.fullname}} </b></center></div>
                         </div>
                         <div class="card-body">
-                            <form action="{{'.'}}"  method="POST" enctype="multipart/form-data">  {% comment %} 'enctype="multipart/form-data' Required when uploading files {% endcomment %}
+                            <form action="{{'.'}}"  method="POST" >
                                 {% csrf_token %}
                             <div class="row">
                                 <div class="col-md-6 col-lg-6">
@@ -87,15 +81,6 @@
                                             {{ form.password}}
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                      <label for="">Xác nhận mật khẩu</label>
-                                      <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-user-shield"></i></span>
-                                        </div>
-                                        {{ form.password2}}
-                                    </div>
-                                  </div>
                                 </div>
                                 <div class="col-md-6 col-lg-6">				
                                   
@@ -104,45 +89,45 @@
                                         {{ form.gender}}
                                     </div>
                                     <div class="form-group">
-                                      <label for="">Số điện thoại</label>
-                                      <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1"><i class="fas fa-phone"></i></span>
-                                        </div>
-                                        {{ form.phone}}
+                                        <label for="">Số điện thoại</label>
+                                        <div class="input-group mb-3">
+                                          <div class="input-group-prepend">
+                                              <span class="input-group-text" id="basic-addon1"><i class="fas fa-phone"></i></span>
+                                          </div>
+                                          {{ form.phone}}
+                                      </div>
                                     </div>
-                                  </div>
+                                        <div class="form-group">
+                                          <label for="">Địa chỉ</label>
+                                          <div class="input-group mb-3">
+                                              <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1"><i class="far fa-address-card"></i></span>
+                                              </div>
+                                              {{ form.address}} 
+                                          </div>
+                                      </div>
                                       <div class="form-group">
-                                        <label for="">Địa chỉ</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1"><i class="far fa-address-card"></i></span>
-                                            </div>
-                                            {{ form.address}} 
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Chức vụ</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1"><i class="fas fa-user-tie"></i></span>
-                                            </div>
-                                            {{ form.position}}
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="">Lương</label>
-                                        <div class="input-group mb-3">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text" id="basic-addon1"><i class="far fa-money-bill-alt"></i></span>
-                                            </div>
-                                            {{ form.salary}}
-                                        </div>
-                                    </div>
+                                          <label for="">Chức vụ</label>
+                                          <div class="input-group mb-3">
+                                              <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1">{% if employee.position == 'Nhân viên' %}<i class="fas fa-user-alt"></i> {% else %} <i class="fas fa-user-tie"> </i>{% endif %}</span>
+                                              </div>
+                                              {{ form.position}}
+                                          </div>
+                                      </div>
+                                      <div class="form-group">
+                                          <label for="">Lương</label>
+                                          <div class="input-group mb-3">
+                                              <div class="input-group-prepend">
+                                                  <span class="input-group-text" id="basic-addon1"><i class="far fa-money-bill-alt"></i></span>
+                                              </div>
+                                              {{ form.salary}}
+                                          </div>
+                                      </div>
                                 </div>
                                 <div class="form-group">
                                 <input type="submit" value="Lưu" class="btn-success btn  ">
-                                <a href="{% url 'employee_list' %}" class="btn  btn-primary">Quay lại</a>
+                                <a href="{% url 'profile_employee' employee.id %}" class="btn  btn-primary">Quay lại</a>
                             </div>
                             </div>
                         </form>

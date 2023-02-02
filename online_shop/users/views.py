@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect, get_object_or_404 # calls the give
 from .forms import CustomerForm,Customer_info_Form,Change_Password_Form
 from django.contrib import messages
 from .models import Customer, Employee
-from .forms import AddCustomerForm,AddEmployeeForm,EmployeeForm,ProfileEmployeeForm,SearchEmployeeForm,SearchCustomerForm
+from .forms import AddCustomerForm,AddEmployeeForm,EmployeeForm,ProfileEmployeeForm,SearchEmployeeForm,SearchCustomerForm,Employee_info_Form,Change_Password_Employee_Form
 from . utils import handle_upload_file
 from .serializers import CustomerSerializer #,CustomerCreationSerializer
 from products.models import Category
@@ -16,68 +16,146 @@ from rest_framework import status
 
 # ------------------------------------------ Begin Home Page ----------------------------------------------------
 
-# edit customer
-def edit_info(request,id):
+#                           -------------------- Customer -----------------------
+
+# View profile customer
+def profile_customer(request,user_id):
     # show navbar in home page
     categories=Category.objects.all()
     
-    user = get_object_or_404(User, id=id)
-    customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
-    if(request.method=="POST"):
-        form =Customer_info_Form(request.POST,instance=customer)
-        if form.is_valid():
-            form.save()
-            messages.success(request,'Đã cập nhập khách hàng thành công')
-            return redirect("home")
-        # print(form.errors) #print error of form
+    user = get_object_or_404(User, id=user_id)
+    if (user.is_staff):
+        employee=Employee.objects.filter(username=user.username).first()
+        context={
+            'customer':employee,
+            'categories':categories
+        }
+        return render(request, 'home/profile_customer.html', context)
     else:
-        form = CustomerForm(instance=customer)
+        customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
+        context={
+            'customer':customer,
+            'categories':categories
+        }
+        return render(request, 'home/profile_customer.html', context)
 
-    context={
-        'form':form,
-        'categories':categories
-    }
-    return render(request, 'home/edit_info.html', context)
+# edit customer
+def edit_profile_customer(request,user_id):
+    # show navbar in home page
+    categories=Category.objects.all()
+    
+    user = get_object_or_404(User, id=user_id)
+    if (user.is_staff):
+        employee=Employee.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
+        if(request.method=="POST"):
+            form =Employee_info_Form(request.POST, request.FILES,instance=employee)
+            if form.is_valid():
+                handle_upload_file(request.FILES['image'])
+                form.save()
+                messages.success(request,'Đã cập nhập khách hàng thành công')
+                return redirect("home")
+        else:
+            form = Employee_info_Form(instance=employee)
+        context={
+            'form':form,
+            'categories':categories
+        }
+        return render(request, 'home/edit_profile_customer.html', context)
+    else:
+        customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
+        if(request.method=="POST"):
+            form =Customer_info_Form(request.POST,instance=customer)
+            if form.is_valid():
+                form.save()
+                messages.success(request,'Đã cập nhập khách hàng thành công')
+                return redirect("home")
+            # print(form.errors) #print error of form
+        else:
+            form = Customer_info_Form(instance=customer)
+
+        context={
+            'form':form,
+            'categories':categories
+        }
+        return render(request, 'home/edit_profile_customer.html', context)
 
 # Change password
-def change_password(request, id):
+def change_password(request,user_id):
     # show navbar in home page
     categories=Category.objects.all()
     
-    user = get_object_or_404(User, id=id)
-    customer=Customer.objects.filter(username=user.username).first()
-    form =Change_Password_Form(request.POST)
-    
-    if form.is_valid():
-        new_password=request.POST['password']
-        old_password=request.POST['old_password']
-        password2=request.POST['password2']
-        if(customer.password == old_password):
-            if(old_password==new_password):
-                messages.error(request,'Mật khẩu mới không được trùng với mật khẩu cũ!')
-                return redirect('change_password', id=user.id)
-            else:
-                if(new_password!=password2):
-                    messages.error(request,'Mật khẩu không trùng nhau!')
+    user = get_object_or_404(User, id=user_id)
+    if (user.is_staff):
+        # Change password for employee
+        employee=Employee.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
+        form =Change_Password_Employee_Form(request.POST)
+        
+        if form.is_valid():
+            new_password=request.POST['password']
+            old_password=request.POST['old_password']
+            password2=request.POST['password2']
+            if(employee.password == old_password):
+                if(old_password==new_password):
+                    messages.error(request,'Mật khẩu mới không được trùng với mật khẩu cũ!')
                     return redirect('change_password', id=user.id)
                 else:
-                    customer.password=new_password
-                    customer.save()
-                    new_password=make_password(new_password,hasher='default')
-                    user.password=new_password
-                    user.save()
-                    messages.success(request,'Đã đổi mật khẩu thành công!. Mời quý khách đăng nhập lại.')
-                    return redirect("home")
-        else:
-            messages.error(request,'Sai mật khẩu!')
-            return redirect('change_password', id=user.id)
-    form =Change_Password_Form()
-    
-    context={
-        'form':form,
-        'categories':categories
-    }
-    return render(request, 'home/change_password.html',context)
+                    if(new_password!=password2):
+                        messages.error(request,'Mật khẩu không trùng nhau!')
+                        return redirect('change_password', id=user.id)
+                    else:
+                        employee.password=new_password
+                        employee.save()
+                        
+                        new_password=make_password(new_password,hasher='default')
+                        user.password=new_password
+                        user.save()
+                        messages.success(request,'Đã đổi mật khẩu thành công!. Mời quý khách đăng nhập lại.')
+                        return redirect("home")
+            else:
+                messages.error(request,'Sai mật khẩu!')
+                return redirect('change_password', id=user.id)
+        form =Change_Password_Employee_Form()
+        
+        context={
+            'form':form,
+            'categories':categories
+        }
+        return render(request, 'home/change_password.html',context)
+    else:
+        # Change password for customer
+        customer=Customer.objects.filter(username=user.username).first()
+        form =Change_Password_Form(request.POST)
+        if form.is_valid():
+            new_password=request.POST['password']
+            old_password=request.POST['old_password']
+            password2=request.POST['password2']
+            if(customer.password == old_password):
+                if(old_password==new_password):
+                    messages.error(request,'Mật khẩu mới không được trùng với mật khẩu cũ!')
+                    return redirect('change_password', id=user.id)
+                else:
+                    if(new_password!=password2):
+                        messages.error(request,'Mật khẩu không trùng nhau!')
+                        return redirect('change_password', id=user.id)
+                    else:
+                        customer.password=new_password
+                        customer.save()
+                        
+                        new_password=make_password(new_password,hasher='default')
+                        user.password=new_password
+                        user.save()
+                        messages.success(request,'Đã đổi mật khẩu thành công!. Mời quý khách đăng nhập lại.')
+                        return redirect("home")
+            else:
+                messages.error(request,'Sai mật khẩu!')
+                return redirect('change_password', id=user.id)
+        form =Change_Password_Form()
+        
+        context={
+            'form':form,
+            'categories':categories
+        }
+        return render(request, 'home/change_password.html',context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -108,11 +186,7 @@ def customer_list(request):
 
 # add info customer
 def add_user(request):
-    #show admin web user information
-    user=request.user
-    profie_employee =Employee.objects.filter(username=user.username).first()
-    
-    form=AddCustomerForm()
+
     if(request.method=="POST"):
         form=AddCustomerForm(request.POST)
         username=request.POST['username']
@@ -141,6 +215,10 @@ def add_user(request):
             messages.success(request,'Thêm khách hàng thành công')
             return redirect('customer_list')
     else:
+        # show admin web user information
+        user=request.user
+        profie_employee =Employee.objects.filter(username=user.username).first()
+        # Add Customer Form
         form=AddCustomerForm()
     
     context={
@@ -151,31 +229,36 @@ def add_user(request):
 
 # Edit customer
 def edit_customer_admin(request,customer_id):
-    user=request.user
-    profie_employee =Employee.objects.filter(username=user.username).first()
-    
-    categories=Category.objects.all()
+
     customer = get_object_or_404(Customer, id=customer_id)
     user=User.objects.filter(username=customer.username).first()
-    form =CustomerForm(request.POST or None,instance=customer)
     
     if request.method == 'POST':
+        form =CustomerForm(request.POST or None,instance=customer)
         new_password = request.POST.get('password')
         is_active=request.POST.get('is_active')
         if form.is_valid():
+            # Save account customer
             form.save()
+            
+            # Save account auth user
+            user.email = request.POST.get('email')
             password=make_password(new_password,hasher='default')
             user.password=password
             user.is_active=is_active
             user.save()
+            
             messages.success(request,'Đã cập nhập khách hàng thành công')
             return redirect("customer_list")
     else:
+        # show admin web user information
+        user=request.user
+        profie_employee =Employee.objects.filter(username=user.username).first()
+        
         form = CustomerForm(instance=customer)
 
     context={
         'form':form,
-        'categories':categories,
         'profie_employee':profie_employee,
         'customer':customer
     }
@@ -224,6 +307,7 @@ def search_customer(request):
 def employee_list(request):
     user=request.user
     profie_employee=Employee.objects.filter(username=user.username).first()
+    
     search_form= SearchEmployeeForm()
     
     # All employee in list and pagination
@@ -241,11 +325,7 @@ def employee_list(request):
 
 # add Employee
 def add_employee(request):
-    #show admin web user information
-    user=request.user
-    profie_employee =Employee.objects.filter(username=user.username).first()
     
-    form=AddEmployeeForm()
     if(request.method=="POST"):
         form=AddEmployeeForm(request.POST, request.FILES)
         image=request.FILES['image']
@@ -271,22 +351,25 @@ def add_employee(request):
              return redirect('add_employee')
         if(form.is_valid()):
             handle_upload_file(image)
+            
+            # Add account auth user
             user=User.objects.create_user(username,email,password )
-
             user.is_staff = True
-            user.is_superuser = True if position == 'Quản lý' else False
+            user.is_superuser = True if position == 'Admin' else False
             user.save()
-            # form.save()
+            
+            # Add account employee
             account=Employee(image=image,username=username,email=email,password=password,fullname=fullname
                              ,phone=phone,address=address,gender=gender,position=position,salary=salary)
-            
-            # customer=Customer(fullname=fullname,phone=phone,username=username,
-            #                  email=email,password=password,address=address,gender=gender)
-            # customer.save()
             account.save()
+            
             messages.success(request,'Tạo nhân viên thành công')
             return redirect('employee_list')
     else:
+        #show admin web user information
+        user=request.user
+        profie_employee =Employee.objects.filter(username=user.username).first()
+        
         form=AddEmployeeForm()
     
     context={
@@ -297,29 +380,33 @@ def add_employee(request):
 
 # Edit employee
 def edit_employee(request,employee_id):
-    #show admin web user information
-    user=request.user
-    profie_employee =Employee.objects.filter(username=user.username).first()
-    
+
     employee = get_object_or_404(Employee, id=employee_id)
     user=User.objects.filter(username=employee.username).first()
-    form = EmployeeForm(request.POST, request.FILES, instance=employee)
+    # customer=Customer.objects.filter(username=employee.username).first()
+    
     if request.method == 'POST':
-        new_password = request.POST.get('password')
-        position=request.POST.get('position')
-        is_active=request.POST.get('is_active')
+        form = EmployeeForm(request.POST, request.FILES, instance=employee)
         if form.is_valid():
             handle_upload_file(request.FILES['image'])
+            # Save account employee
             form.save()
-            user.is_superuser = True if position == 'Quản lý' else False
-            password=make_password(new_password,hasher='default')
+            
+            # Save account auth user
+            user.is_superuser = True if request.POST.get('position') == 'Admin' else False
+            user.email = request.POST.get('email')
+            password=make_password(request.POST.get('password'),hasher='default')
             user.password=password
-            user.is_active=is_active
+            user.is_active=request.POST.get('is_active')
             user.save()
+            
             messages.success(request,'Đã cập nhập nhân viên thành công')
             return redirect('employee_list')
 
     else:
+        #show admin web user information
+        user=request.user
+        profie_employee =Employee.objects.filter(username=user.username).first()
         form = EmployeeForm(instance=employee)
     
     context={
@@ -331,11 +418,15 @@ def edit_employee(request,employee_id):
 
 # Delete employee 
 def delete_employee(request,employee_id):
+    
     employee=Employee.objects.get(id=employee_id)
-    account=User.objects.filter(username=employee.username)
-    account.delete()
     employee.delete()
+    
+    user_auth=User.objects.filter(username=employee.username)
+    user_auth.delete()
+    
     messages.success(request,'Xóa nhân viên thành công')
+    
     return redirect('employee_list')
 
 # Search Employee
@@ -365,26 +456,43 @@ def search_employee(request):
     }
     return render(request, 'admin/user_manager/employees/search_employee.html',context)
 
-# View & Edit Profile employee
-def profile_employee(request,employee_id):
+# Show Profile employee
+def profile_employee(request,user_id):
     #show admin web user information
     user_admin=request.user
     profie_employee =Employee.objects.filter(username=user_admin.username).first()
     
-    employee = get_object_or_404(Employee, id=employee_id)
+    employee = get_object_or_404(Employee, id=user_id)
+
+    context={
+        'profie_employee':profie_employee,
+        'employee':employee, 
+    }
+    return render(request, 'admin/user_manager/employees/profile_employee/profile_employee.html', context)
+
+# Edit Profile employee
+def edit_profile_employee(request,user_id):
+
+    employee = get_object_or_404(Employee, id=user_id)
     user=User.objects.filter(username=employee.username).first()
     
-    form = ProfileEmployeeForm(request.POST or None, instance=employee)
     if request.method == 'POST':
-        new_password = request.POST.get('password')
+        form = ProfileEmployeeForm(request.POST, request.FILES, instance=employee)
         if form.is_valid():
+            # Sace account employee
             form.save()
-            password=make_password(new_password,hasher='default')
+            # Save account auth user
+            user.email = request.POST.get('email')
+            password=make_password(request.POST.get('password'),hasher='default')
             user.password=password
             user.save()
+            
             messages.success(request,'Đã cập nhập thông tin thành công, mời bạn đăng nhập lại')
             return redirect('home')
     else:
+        #show admin web user information
+        user_admin=request.user
+        profie_employee =Employee.objects.filter(username=user_admin.username).first()
         form = ProfileEmployeeForm(instance=employee)
 
     context={
@@ -392,7 +500,7 @@ def profile_employee(request,employee_id):
         'form':form,
         'employee':employee, 
     }
-    return render(request, 'admin/user_manager/employees/profile_employee/profile_employee.html', context)
+    return render(request, 'admin/user_manager/employees/profile_employee/edit_profile_employee.html', context)
 
 # ------------------------------------------ End Admin Page ----------------------------------------------------
 

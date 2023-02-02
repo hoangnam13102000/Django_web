@@ -94,7 +94,7 @@
           <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ customer.fullname }}</td>
-            <td>{{ customer.gender }}</td>
+            <td>{% if  customer.gender  == 'Male' %} Nam {% elif  customer.gender  == 'Female' %} Nữ {% else %} None {% endif %}</td>
             <td>{{ customer.email }}</td>
             <td>{{ customer.phone }}</td>
             <td>{{ customer.address }}</td>

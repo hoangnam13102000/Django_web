@@ -15,9 +15,10 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=False, null=True)
     image=models.ImageField(upload_to='images/products',null=False, default=None)
     title=models.CharField(max_length=255)
-    description=models.CharField(max_length=500 )
+    description=models.CharField(max_length=500)
     price=models.IntegerField(default=0)
     is_active=models.BooleanField(default=True)
+    featured=models.CharField(max_length=255, default=None)
     brand=models.CharField(max_length=255,null=False, default=None)
     class Meta:
         db_table='Product'

@@ -6,8 +6,9 @@ from . models import Category,Comment,Product
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['image', 'title', 'category', 'price', 'description','is_active','brand']
+        fields = ['image', 'title', 'category', 'price', 'description','is_active','brand','featured']
         choices_status=(('True','Hoạt động'),('False','Khóa'))
+        choices_featured=(('Normal','Bình thường'),('Featured','Nổi bật'),('Best_selling','Bán chạy nhất'),('Favorite','Yêu thích nhất'))
         widgets = {
             'image': forms.FileInput(attrs={'class': 'form-control',"type":"file"}),
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Tên sản phẩm'}),
@@ -16,6 +17,7 @@ class ProductForm(forms.ModelForm):
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Mô tả sản phẩm'}),
             'is_active': forms.Select(choices=choices_status,attrs={'class': 'form-control'}),
             'brand': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Hãng'}),
+            'featured':forms.Select(choices=choices_featured,attrs={'class': 'form-control'})
         }
 
 # Search Product Form
