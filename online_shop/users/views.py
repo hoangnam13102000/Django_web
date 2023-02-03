@@ -19,7 +19,10 @@ from rest_framework import status
 #                           -------------------- Customer -----------------------
 
 # View profile customer
-def profile_customer(request,user_id):
+def profile_user(request,user_id):
+    # Title Web
+    title_web="Thông tin người dùng"
+    
     # show navbar in home page
     categories=Category.objects.all()
     
@@ -27,20 +30,25 @@ def profile_customer(request,user_id):
     if (user.is_staff):
         employee=Employee.objects.filter(username=user.username).first()
         context={
+            'title_web':title_web,
             'customer':employee,
             'categories':categories
         }
-        return render(request, 'home/profile_customer.html', context)
+        return render(request, 'home/pages/profile_user.html', context)
     else:
         customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
         context={
+            'title_web':title_web,
             'customer':customer,
             'categories':categories
         }
-        return render(request, 'home/profile_customer.html', context)
+        return render(request, 'home/pages/profile_user.html', context)
 
 # edit customer
-def edit_profile_customer(request,user_id):
+def edit_profile_user(request,user_id):
+    # Title Web
+    title_web="Cập nhập thông tin"
+    
     # show navbar in home page
     categories=Category.objects.all()
     
@@ -57,10 +65,11 @@ def edit_profile_customer(request,user_id):
         else:
             form = Employee_info_Form(instance=employee)
         context={
+            'title_web':title_web,
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/edit_profile_customer.html', context)
+        return render(request, 'home/widgets/edit_profile_user.html', context)
     else:
         customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
         if(request.method=="POST"):
@@ -74,13 +83,17 @@ def edit_profile_customer(request,user_id):
             form = Customer_info_Form(instance=customer)
 
         context={
+            'title_web':title_web,
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/edit_profile_customer.html', context)
+        return render(request, 'home/widgets/edit_profile_user.html', context)
 
 # Change password
 def change_password(request,user_id):
+    # Title Web
+    title_web="đổi mật khẩu"
+    
     # show navbar in home page
     categories=Category.objects.all()
     
@@ -117,10 +130,11 @@ def change_password(request,user_id):
         form =Change_Password_Employee_Form()
         
         context={
+            'title_web':title_web,
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/change_password.html',context)
+        return render(request, 'home/pages/change_password.html',context)
     else:
         # Change password for customer
         customer=Customer.objects.filter(username=user.username).first()
@@ -152,10 +166,11 @@ def change_password(request,user_id):
         form =Change_Password_Form()
         
         context={
+            'title_web':title_web,
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/change_password.html',context)
+        return render(request, 'home/pages/change_password.html',context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -165,6 +180,9 @@ def change_password(request,user_id):
 
 # Show Customer list
 def customer_list(request):
+    # Title Web
+    title_web="Danh sách khách hàng"
+    
     #show admin web user information
     user=request.user
     profie_employee  =Employee.objects.filter(username=user.username).first()
@@ -178,6 +196,7 @@ def customer_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'page_obj':page_obj,
         'profie_employee':profie_employee ,
         'search_form':search_form
@@ -186,7 +205,9 @@ def customer_list(request):
 
 # add info customer
 def add_user(request):
-
+    # Title Web
+    title_web="Thêm khách hàng"
+    
     if(request.method=="POST"):
         form=AddCustomerForm(request.POST)
         username=request.POST['username']
@@ -222,6 +243,7 @@ def add_user(request):
         form=AddCustomerForm()
     
     context={
+        'title_web':title_web,
         'form':form,
         'profie_employee':profie_employee
     }
@@ -229,7 +251,9 @@ def add_user(request):
 
 # Edit customer
 def edit_customer_admin(request,customer_id):
-
+    # Title Web
+    title_web="Cập nhập thông tin khách hàng"
+    
     customer = get_object_or_404(Customer, id=customer_id)
     user=User.objects.filter(username=customer.username).first()
     
@@ -258,6 +282,7 @@ def edit_customer_admin(request,customer_id):
         form = CustomerForm(instance=customer)
 
     context={
+        'title_web':title_web,
         'form':form,
         'profie_employee':profie_employee,
         'customer':customer
@@ -275,6 +300,9 @@ def delete_customer(request,customer_id):
 
 # Search customer
 def search_customer(request):
+    # Title Web
+    title_web="Tìm kiếm khách hàng"
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -295,6 +323,7 @@ def search_customer(request):
         data = Customer.objects.filter(fullname__icontains=keyword).order_by('-id')
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'data':data,
         'search_form':search_form
@@ -305,6 +334,9 @@ def search_customer(request):
 
 # Show Employee list
 def employee_list(request):
+    # Title Web
+    title_web="Danh sách nhân viên"
+    
     user=request.user
     profie_employee=Employee.objects.filter(username=user.username).first()
     
@@ -317,6 +349,7 @@ def employee_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'page_obj':page_obj,
         'profie_employee':profie_employee,
         'search_form':search_form
@@ -325,6 +358,8 @@ def employee_list(request):
 
 # add Employee
 def add_employee(request):
+    # Title Web
+    title_web="Thêm nhân viên"
     
     if(request.method=="POST"):
         form=AddEmployeeForm(request.POST, request.FILES)
@@ -373,6 +408,7 @@ def add_employee(request):
         form=AddEmployeeForm()
     
     context={
+        'title_web':title_web,
         'form':form,
         'profie_employee':profie_employee,
     }
@@ -380,7 +416,9 @@ def add_employee(request):
 
 # Edit employee
 def edit_employee(request,employee_id):
-
+    # Title Web
+    title_web="Câp nhập thông tin nhân viên"
+    
     employee = get_object_or_404(Employee, id=employee_id)
     user=User.objects.filter(username=employee.username).first()
     # customer=Customer.objects.filter(username=employee.username).first()
@@ -410,6 +448,7 @@ def edit_employee(request,employee_id):
         form = EmployeeForm(instance=employee)
     
     context={
+        'title_web':title_web,
         'employee':employee,
         'form':form,
         'profie_employee':profie_employee
@@ -431,6 +470,9 @@ def delete_employee(request,employee_id):
 
 # Search Employee
 def search_employee(request):
+    # Title Web
+    title_web="Tìm kiếm nhân viên"
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -450,6 +492,7 @@ def search_employee(request):
         data = Employee.objects.filter(fullname__icontains=keyword).order_by('-id')
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'data':data,
         'search_form':search_form
@@ -458,6 +501,9 @@ def search_employee(request):
 
 # Show Profile employee
 def profile_employee(request,user_id):
+    # Title Web
+    title_web="Thông tin người dùng"
+    
     #show admin web user information
     user_admin=request.user
     profie_employee =Employee.objects.filter(username=user_admin.username).first()
@@ -465,6 +511,7 @@ def profile_employee(request,user_id):
     employee = get_object_or_404(Employee, id=user_id)
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'employee':employee, 
     }
@@ -472,7 +519,9 @@ def profile_employee(request,user_id):
 
 # Edit Profile employee
 def edit_profile_employee(request,user_id):
-
+    # Title Web
+    title_web="Cập nhập thông tin người dùng"
+    
     employee = get_object_or_404(Employee, id=user_id)
     user=User.objects.filter(username=employee.username).first()
     
@@ -496,6 +545,7 @@ def edit_profile_employee(request,user_id):
         form = ProfileEmployeeForm(instance=employee)
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'form':form,
         'employee':employee, 

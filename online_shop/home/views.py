@@ -19,6 +19,9 @@ from rest_framework import status
 
 # Home page
 def index(request):
+    # Title Web
+    title_web="Trang chủ"
+    
     # # show navbar in home page
     categories=Category.objects.all()
     
@@ -49,31 +52,39 @@ def index(request):
             item['total_price'] = item['price'] * item['quantity']
             total += item['total_price']
             cart_items.append(item)
-
+    
     context={
+        'title_web':title_web,
         'page_obj': page_obj,
         'categories':categories,
         'page_obj1': page_obj1,
         'page_obj2': page_obj2,
         'cart_items': cart_items
     }
-    return render(request,'home/index.html',context)
+    return render(request,'home/pages/index.html',context)
 
 # Login page
 def login(request):
+     # Title Web
+    title_web="Đăng nhập"
     
     if(request.method=="POST"):
         username=request.POST['username']
         password=request.POST['password']
+        # remember_me = request.POST['remember_me']
         account =authenticate(request, username=username,password=password )
         if(account is not None):
             get_user= get_user_model()
             user=get_user.objects.get(username= username)
             if(user.is_staff == True):
+                # if not remember_me:
+                #     request.session.set_expiry(0)
                 messages.success(request,'Đăng nhập trang Admin thành công')
                 auth_login(request,user)
                 return redirect('admin')
             else:
+                # if not remember_me:
+                #     request.session.set_expiry(0)
                 auth_login(request,user)
                 messages.success(request,'Đăng nhập thành công')
                 return redirect('home')
@@ -81,18 +92,21 @@ def login(request):
             messages.error(request,'Tài khoản hoặc mật khẩu không đúng!')
             return redirect('login')
     else:
-         # show navbar in home page
+        # show navbar in home page
         categories=Category.objects.all()
-        acount=LoginForm()
+        form=LoginForm()
     
     context={
+        'title_web':title_web,
         'categories':categories,
-        'form':acount
+        'form':form
     }
-    return render(request,'home/login.html', context)
+    return render(request,'home/pages/login.html', context)
 
 # Register page
 def register(request):
+    # Title Web
+    title_web="Đăng ký"
     
     if(request.method=="POST"):
         form=RegisterForm(request.POST)
@@ -121,10 +135,11 @@ def register(request):
         form=RegisterForm()
     
     context={
+        'title_web':title_web,
         'categories':categories,
         'form':form
     }
-    return render(request,'home/register.html',context)
+    return render(request,'home/pages/register.html',context)
 
 # Logout
 def logout(request):
@@ -134,6 +149,8 @@ def logout(request):
 
 # Contact page
 def contact(request):
+    # Title Web
+    title_web="Liên hệ"
     
     if request.method == 'POST':
         if request.user.is_authenticated:
@@ -155,10 +172,11 @@ def contact(request):
         form = ContactForm()
     
     context={
+        'title_web':title_web,
         'categories':categories,
         'form':form
     }
-    return render(request,'home/contact.html',context)
+    return render(request,'home/pages/contact.html',context)
 
 
 # ERROR NOT FOUND PAGE
@@ -166,7 +184,7 @@ def contact(request):
 #     return render(request, 'home/404.html')
 
 # def page_not_found(request, exception):
-#     return render(request, 'home/404.html', {}, status=404)
+#     return render(request, 'home/pages/404.html', {}, status=404)
 # handler404 = page_not_found
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
@@ -174,6 +192,9 @@ def contact(request):
 # ------------------------------------------ Begin Admin Page ----------------------------------------------------
 
 def index_admin(request):
+    # Title Web
+    title_web="Trang chủ | Admin "
+    
     #show admin web user information
     user=request.user
     profie_employee  =Employee.objects.filter(username=user.username).first()
@@ -191,6 +212,7 @@ def index_admin(request):
     page_obj1 = paginator1.get_page(page_number1)
     
     context={
+        'title_web':title_web,
         'page_obj': page_obj,
         'page_obj1': page_obj1,
         'profie_employee':profie_employee 
@@ -200,6 +222,9 @@ def index_admin(request):
 
 # Show list Contact 
 def contact_list(request):
+    # Title Web
+    title_web="Quản lý phản hồi"
+    
     #show admin web user information
     user=request.user
     profie_employee  =Employee.objects.filter(username=user.username).first()
@@ -214,6 +239,7 @@ def contact_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'page_obj': page_obj,
         'profie_employee':profie_employee ,
         'search_form':search_form
@@ -223,6 +249,9 @@ def contact_list(request):
 
 # Search Contact
 def search_contact(request):
+    # Title Web
+    title_web="Tìm kiếm phản hồi"
+    
     #show admin web user information
     user=request.user
     profie_employee  =Employee.objects.filter(username=user.username).first()
@@ -236,6 +265,7 @@ def search_contact(request):
         data = Contact.objects.filter(customer_name__icontains=keyword).order_by('-id')
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee ,
         'data':data,
         'search_form':search_form

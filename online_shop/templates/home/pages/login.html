@@ -20,6 +20,20 @@
                     <label for="">Mật Khẩu</label>
                     {{ form.password}}
                 </div>
+                {% comment %} <div class="form-group">
+                 
+                  <div class="row">
+                    <div class="col-md-5">
+                    </div>
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-3">
+                      {{ form.remember_me}}
+                      <label for="">Nhớ tài khoản</label>
+                    </div>
+                  </div>
+                  
+              </div> {% endcomment %}
                 <div class="form-group">
                   <label for="">Bạn chưa có tài khoản ?  <a href="{% url 'register' %}">Đăng Ký</a</label>     
               </div>

@@ -10,6 +10,7 @@ from .models import Contact
 class LoginForm(forms.Form):
     username=forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Tên đăng nhập'}))
     password=forms.CharField(max_length=50,widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Mật khẩu'}))
+    # remember_me = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'type':'checkbox','required':'False'}))
     
 # Register Form
 class RegisterForm(forms.Form):

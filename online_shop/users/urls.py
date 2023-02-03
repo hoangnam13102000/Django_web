@@ -5,8 +5,8 @@ urlpatterns = [
 # ------------------------------------------ Begin Home Page -------------------------------------------------
 
 #                           -------------------- Customer -----------------------
-     path('<int:user_id>/profile_customer/' , views.profile_customer, name='profile_customer'),
-     path('<int:user_id>/edit_profile_customer/' , views.edit_profile_customer, name='edit_profile_customer'),
+     path('<int:user_id>/profile_user/' , views.profile_user, name='profile_user'),
+     path('<int:user_id>/edit_profile_user/' , views.edit_profile_user, name='edit_profile_user'),
      path('<int:user_id>/change_password/' , views.change_password, name='change_password'),
 
 # ------------------------------------------ End Home Page ----------------------------------------------------

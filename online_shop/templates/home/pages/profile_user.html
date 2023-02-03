@@ -5,7 +5,7 @@
     <div class="container justify-content-around">
       <ul class="breadcrumb">
         <li><a href="{% url 'home' %}">Trang chủ</a></li>
-        <li><a href="{% url 'profile_customer' user.id %}">Hồ sơ {{request.user}}</a></li>
+        <li><a href="{% url 'profile_user' user.id %}">Hồ sơ {{request.user}}</a></li>
     </ul>
         <div class="row">
           <div class="row gutters-sm">
@@ -106,7 +106,7 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-12">
-                      <a class="btn btn-info" href="{% url 'edit_profile_customer' user.id %}">Chỉnh sửa</a>
+                      <a class="btn btn-info" href="{% url 'edit_profile_user' user.id %}">Chỉnh sửa</a>
                     </div>
                   </div>
                 </div>

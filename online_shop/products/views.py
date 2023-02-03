@@ -18,7 +18,9 @@ from rest_framework import status
 
 # View Product detail in home page by id
 def product_detail(request, product_id):
-
+    # Title Web
+    title_web="Chi tiết sản phẩm"
+    
     # comment product
     product = get_object_or_404(Product, pk=product_id)
     comments= product.comments.all()
@@ -39,20 +41,24 @@ def product_detail(request, product_id):
         form = CommentForm()
     
     context={
+        'title_web':title_web,
         'product': product,
         'categories':categories,
         'form': form,
         'comments':comments
     }
-    return render(request, 'home/product_detail.html',context)
+    return render(request, 'home/widgets/product_detail.html',context)
 
 # Show product depend on category.id
 def product_of_category(request, category_id):
-    # show navbar in home page
-    categories=Category.objects.all()
-    
     # get id of category from navbar
     category = get_object_or_404(Category, id=category_id)
+    
+    # Title Web
+    title_web=category.name
+    
+    # show navbar in home page
+    categories=Category.objects.all()
     
     # view all products and pagination depend on category.id
     product=Product.objects.filter(category=category).all()
@@ -61,14 +67,18 @@ def product_of_category(request, category_id):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'page_obj':page_obj,
         'categories':categories,
         'category':category
     }
-    return render(request, 'home/shop_product_list.html', context)
+    return render(request, 'home/pages/shop_product_list.html', context)
 
 # Search product
 def search_products(request):
+    # Title Web
+    title_web="Tìm kiếm sản phẩm"
+    
     # show navbar in home page
     categories=Category.objects.all()
     
@@ -77,10 +87,11 @@ def search_products(request):
     data = Product.objects.filter(title__icontains=keyword).order_by('-id')
     
     context={
+        'title_web':title_web,
         'data': data,
         'categories':categories
     }
-    return render(request, 'home/search.html', context)
+    return render(request, 'home/widgets/search.html', context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -90,6 +101,9 @@ def search_products(request):
 
 # Show Category list
 def category_list(request):
+    # Title Web
+    title_web='Danh sách loại sản phẩm'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -101,6 +115,7 @@ def category_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'page_obj': page_obj,
         'profie_employee':profie_employee
     }
@@ -108,6 +123,8 @@ def category_list(request):
 
 # Add Category
 def addCategory(request):
+    # Title Web
+    title_web='Thêm loại sản phẩm'
     
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -127,6 +144,7 @@ def addCategory(request):
         form = CategoryForm()
 
     context={
+        'title_web':title_web,
         'form':form,
         'profie_employee':profie_employee
     }
@@ -134,6 +152,9 @@ def addCategory(request):
 
 # Edit Category by id
 def edit_category(request,category_id):
+    # Title Web
+    title_web='Cập nhập loại sản phẩm'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -148,6 +169,7 @@ def edit_category(request,category_id):
         form = CategoryForm(instance=category)
 
     context={
+        'title_web':title_web,
         'form': form,
         'profie_employee':profie_employee,
         'category':category
@@ -165,6 +187,9 @@ def delete_category(request, category_id):
 
 # Search Category
 def search_category(request):
+    # Title Web
+    title_web='Tìm kiếm loại sản phẩm'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -173,6 +198,7 @@ def search_category(request):
     data = Category.objects.filter(name__icontains=keyword).order_by('-id')
     
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'data':data,
     }
@@ -182,6 +208,9 @@ def search_category(request):
 
 # Show list Product admin
 def product_list(request):
+    # Title Web
+    title_web='Danh sách sản phẩm'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -196,6 +225,7 @@ def product_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'page_obj': page_obj,
         'profie_employee':profie_employee,
         'search_form':search_form
@@ -205,6 +235,8 @@ def product_list(request):
 
 # Add product into list
 def add_product(request):
+    # Title Web
+    title_web='Thêm sản phẩm'
     
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -225,6 +257,7 @@ def add_product(request):
         form = ProductForm()
 
     context={
+        'title_web':title_web,
         'form':form,
         'profie_employee':profie_employee,
     }
@@ -232,6 +265,9 @@ def add_product(request):
 
 # Edit product
 def edit_product(request, product_id):
+    # Title Web
+    title_web='Cập nhập sản phẩm'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -248,6 +284,7 @@ def edit_product(request, product_id):
         form = ProductForm(instance=product)
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'form': form,
         'product':product,
@@ -265,6 +302,9 @@ def delete_product(request, product_id):
 
 # Search product admin
 def search_product_admin(request):
+    # Title Web
+    title_web='Tìm kiếm sản phẩm'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -278,6 +318,7 @@ def search_product_admin(request):
         data = Product.objects.filter(title__icontains=keyword).order_by('-id')
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'data':data,
         'search_form':search_form,
@@ -288,6 +329,9 @@ def search_product_admin(request):
 
 # Show list Comment admin
 def comment_list(request):
+    # Title Web
+    title_web='Danh sách bình luận'
+    
     #show web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -301,6 +345,7 @@ def comment_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'page_obj': page_obj,
         'search_form':search_form
@@ -317,6 +362,9 @@ def delete_comment(request, comment_id):
     return redirect('comment_list')
 
 def search_comment(request):
+    # Title Web
+    title_web='Tìm kiếm bình luận'
+    
     #show admin web user information
     user=request.user
     profie_employee =Employee.objects.filter(username=user.username).first()
@@ -331,6 +379,7 @@ def search_comment(request):
         data = Comment.objects.filter(commenter_name__icontains=keyword).order_by('-id')
 
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee,
         'data':data,
         'search_form':search_form,

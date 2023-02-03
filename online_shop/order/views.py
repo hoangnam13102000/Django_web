@@ -40,6 +40,9 @@ def add_to_cart(request, product_id):
 
 # View Cart
 def cart(request):
+    # Title Web
+    title_web="Giỏ hàng"
+    
     cart_items = []
     total = 0
     if 'cart' in request.session:
@@ -52,12 +55,13 @@ def cart(request):
     categories=Category.objects.all()
     
     context={
+        'title_web':title_web,
         'cart_items': cart_items,
         'total': total,
         'form':form,
         'categories':categories
     }
-    return render(request, 'home/view_cart.html', context)
+    return render(request, 'home/pages/view_cart.html', context)
 
 
 # Clear Cart
@@ -89,27 +93,31 @@ def checkout(request):
         if request.method == 'POST':
             form = OrderForm(request.POST)
             customer_name=request.POST['customer_name']
-            user_id= request.user.id
-            user = get_object_or_404(User, id=user_id)
-            customer = Customer.objects.filter(id=user.id).first()
             shipping_address=request.POST['shipping_address']
             phone_number=request.POST['phone_number']
             payment_method=request.POST['payment_method']
-            if form.is_valid():
-                order = form.save(commit=False)
-                cart_items = request.session['cart']
-                # total = 0
-                for item in cart_items:
-                    product = get_object_or_404(Product, pk=item['id'])
-                    order = Order(customer_name=customer_name,product=product, shipping_address= shipping_address 
-                                ,quantity=item['quantity'], total_price=item['price'],phone_number=phone_number,payment_method=payment_method,customer =customer  )
-                    order.save()
-                    # total += item['total_price']
-                    # order.total_price = total
-                    # order.save()
-                    request.session['cart'] = []
-            messages.success(request,'Bạn đã đặt hàng thành công')
-            return redirect('cart')
+            user_id= request.user.id
+            user = get_object_or_404(User, id=user_id)
+            if user.is_staff:
+                messages.error(request,'Bạn không thể dùng tài khoản nhân viên để mua hàng')
+                return redirect('cart')
+            else:
+                customer = Customer.objects.filter(id=user.id).first()
+                if form.is_valid():
+                    order = form.save(commit=False)
+                    cart_items = request.session['cart']
+                    # total = 0
+                    for item in cart_items:
+                        product = get_object_or_404(Product, pk=item['id'])
+                        order = Order(customer_name=customer_name,product=product, shipping_address= shipping_address 
+                                    ,quantity=item['quantity'], total_price=item['price'],phone_number=phone_number,payment_method=payment_method,customer =customer  )
+                        order.save()
+                        # total += item['total_price']
+                        # order.total_price = total
+                        # order.save()
+                        request.session['cart'] = []
+                messages.success(request,'Bạn đã đặt hàng thành công')
+                return redirect('cart')
     else:
         messages.error(request,'Bạn phải đăng nhập trước khi thanh toán')
         form = OrderForm()
@@ -118,7 +126,7 @@ def checkout(request):
         'form':form,
         'categories':categories
     }
-    return render(request, 'home/view_cart.html', context)
+    return render(request, 'home/pages/view_cart.html', context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
@@ -126,6 +134,9 @@ def checkout(request):
 
 # Show Order list
 def order_list(request):
+    # Title Web
+    title_web="Danh sách đặt hàng"
+    
     #show admin web user information
     user=request.user
     profie_employee  =Employee.objects.filter(username=user.username).first()
@@ -139,6 +150,7 @@ def order_list(request):
     page_obj = paginator.get_page(page_number)
     
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee ,
         'page_obj':page_obj,
         'search_form':search_form
@@ -154,6 +166,9 @@ def delete_order(request,order_id):
 
 # Search Order
 def search_order(request):
+    # Title Web
+    title_web="Tìm kiếm đơn hàng"
+    
     #show admin web user information
     user=request.user
     profie_employee  =Employee.objects.filter(username=user.username).first()
@@ -169,6 +184,7 @@ def search_order(request):
         data = Order.objects.filter(customer_name__icontains=keyword).order_by('-id')
     
     context={
+        'title_web':title_web,
         'profie_employee':profie_employee ,
         'data':data,
         'search_form':search_form
