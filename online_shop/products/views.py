@@ -47,7 +47,7 @@ def product_detail(request, product_id):
         'form': form,
         'comments':comments
     }
-    return render(request, 'home/widgets/product_detail.html',context)
+    return render(request, 'home/pages/products/product_detail.html',context)
 
 # Show product depend on category.id
 def product_of_category(request, category_id):
@@ -72,7 +72,7 @@ def product_of_category(request, category_id):
         'categories':categories,
         'category':category
     }
-    return render(request, 'home/pages/shop_product_list.html', context)
+    return render(request, 'home/pages/products/shop_product_list.html', context)
 
 # Search product
 def search_products(request):
@@ -91,7 +91,7 @@ def search_products(request):
         'data': data,
         'categories':categories
     }
-    return render(request, 'home/widgets/search.html', context)
+    return render(request, 'home/pages/products/search.html', context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 

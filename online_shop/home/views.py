@@ -101,7 +101,7 @@ def login(request):
         'categories':categories,
         'form':form
     }
-    return render(request,'home/pages/login.html', context)
+    return render(request,'home/pages/account/login.html', context)
 
 # Register page
 def register(request):
@@ -139,7 +139,7 @@ def register(request):
         'categories':categories,
         'form':form
     }
-    return render(request,'home/pages/register.html',context)
+    return render(request,'home/pages/account/register.html',context)
 
 # Logout
 def logout(request):

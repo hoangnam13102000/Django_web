@@ -34,7 +34,7 @@ def profile_user(request,user_id):
             'customer':employee,
             'categories':categories
         }
-        return render(request, 'home/pages/profile_user.html', context)
+        return render(request, 'home/pages/profile_user/profile_user.html', context)
     else:
         customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
         context={
@@ -42,7 +42,7 @@ def profile_user(request,user_id):
             'customer':customer,
             'categories':categories
         }
-        return render(request, 'home/pages/profile_user.html', context)
+        return render(request, 'home/pages/profile_user/profile_user.html', context)
 
 # edit customer
 def edit_profile_user(request,user_id):
@@ -69,7 +69,7 @@ def edit_profile_user(request,user_id):
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/widgets/edit_profile_user.html', context)
+        return render(request, 'home/pages/profile_user/edit_profile_user.html', context)
     else:
         customer=Customer.objects.filter(username=user.username).first() #first() takes a query set and returns the first element
         if(request.method=="POST"):
@@ -87,7 +87,7 @@ def edit_profile_user(request,user_id):
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/widgets/edit_profile_user.html', context)
+        return render(request, 'home/pages/profile_user/edit_profile_user.html', context)
 
 # Change password
 def change_password(request,user_id):
@@ -134,7 +134,7 @@ def change_password(request,user_id):
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/pages/change_password.html',context)
+        return render(request, 'home/pages/account/change_password.html',context)
     else:
         # Change password for customer
         customer=Customer.objects.filter(username=user.username).first()
@@ -170,7 +170,7 @@ def change_password(request,user_id):
             'form':form,
             'categories':categories
         }
-        return render(request, 'home/pages/change_password.html',context)
+        return render(request, 'home/pages/account/change_password.html',context)
 
 # ------------------------------------------ End Home Page ----------------------------------------------------
 
